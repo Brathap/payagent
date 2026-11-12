@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
+import Navbar, { NavTab } from '@/components/Navbar';
 import NovaCanvas from '@/components/NovaCanvas';
 import MerchantDashboard from '@/components/MerchantDashboard';
 import ApiPlayground from '@/components/ApiPlayground';
@@ -12,12 +12,13 @@ import InteractiveTour from '@/components/InteractiveTour';
 import NovaAvatar from '@/components/NovaAvatar';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'canvas' | 'merchant' | 'api'>('canvas');
+  const [activeTab, setActiveTab] = useState<NavTab>('canvas');
   const [configOpen, setConfigOpen] = useState(false);
   const [protocolOpen, setProtocolOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [tourActive, setTourActive] = useState(false);
+  const [canvasView, setCanvasView] = useState<'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads'>('all');
 
   // Cross-component triggers for the tour
   const [tourBudget, setTourBudget] = useState<number | undefined>(undefined);
@@ -27,16 +28,20 @@ export default function Home() {
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      const tabParam = params.get('tab');
-      if (tabParam === 'canvas' || tabParam === 'merchant' || tabParam === 'api') {
+      const tabParam = params.get('tab') as NavTab;
+      if (['canvas', 'bidding', 'dispute', 'merchant', 'api'].includes(tabParam)) {
         setActiveTab(tabParam);
+      }
+      const viewParam = params.get('view');
+      if (viewParam && ['all', 'procure', 'bidding', 'dispute', 'roi', 'payloads'].includes(viewParam)) {
+        setCanvasView(viewParam as any);
       }
       const themeParam = params.get('theme');
       const savedTheme = typeof window !== 'undefined' ? localStorage.getItem('payagent_theme') : null;
-      if (themeParam === 'dark' || (!themeParam && savedTheme === 'dark')) {
+      const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (themeParam === 'dark' || (!themeParam && savedTheme === 'dark') || (!themeParam && !savedTheme && prefersDark)) {
         setTheme('dark');
-      } else if (themeParam === 'light' || (!themeParam && savedTheme === 'light')) {
-        setTheme('light');
       } else {
         setTheme('light');
       }
@@ -110,6 +115,36 @@ export default function Home() {
             theme={theme}
             controlledBudget={tourBudget}
             controlledQuery={tourQuery}
+            canvasView={canvasView === 'all' ? 'all' : 'procure'}
+            setCanvasView={setCanvasView}
+            onRegisterTriggerCheckout={(fn) => {
+              checkoutTriggerRef.current = fn;
+            }}
+            onStartTour={() => setTourActive(true)}
+          />
+        ) : activeTab === 'bidding' ? (
+          <NovaCanvas
+            soundEnabled={soundEnabled}
+            onNavigateToMerchant={() => setActiveTab('merchant')}
+            theme={theme}
+            controlledBudget={tourBudget}
+            controlledQuery={tourQuery}
+            canvasView="bidding"
+            setCanvasView={setCanvasView}
+            onRegisterTriggerCheckout={(fn) => {
+              checkoutTriggerRef.current = fn;
+            }}
+            onStartTour={() => setTourActive(true)}
+          />
+        ) : activeTab === 'dispute' ? (
+          <NovaCanvas
+            soundEnabled={soundEnabled}
+            onNavigateToMerchant={() => setActiveTab('merchant')}
+            theme={theme}
+            controlledBudget={tourBudget}
+            controlledQuery={tourQuery}
+            canvasView="dispute"
+            setCanvasView={setCanvasView}
             onRegisterTriggerCheckout={(fn) => {
               checkoutTriggerRef.current = fn;
             }}
@@ -122,7 +157,7 @@ export default function Home() {
         )}
       </main>
 
-      {/* Cool Interactive AI Copilot Avatar */}
+      {/* Interactive AI Copilot Helper */}
       <NovaAvatar
         soundEnabled={soundEnabled}
         theme={theme}

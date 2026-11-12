@@ -10,7 +10,7 @@
 
 ### *Solving the Trillion-Dollar Dilemma of Autonomous AI Spending with Cryptographic Enclaves & PayPal Orders v2*
 
-[Live Shopper Canvas](http://localhost:3001) • [Enterprise AG Grid Audit](http://localhost:3001?tab=merchant) • [Interactive API Playground](http://localhost:3001?tab=api) • [Watch 3D Demo Video](http://localhost:3001/payagent_demo.mp4)
+[Live Shopper Canvas](http://localhost:3001) • [APCP Protocol Blueprint](http://localhost:3001/protocol) • [Enterprise AG Grid Audit](http://localhost:3001?tab=merchant) • [Interactive API Playground](http://localhost:3001?tab=api) • [Watch Keynote Demo Video](http://localhost:3001/payagent_demo.mp4)
 
 </div>
 
@@ -102,8 +102,8 @@ PayAgent features an interactive, futuristic cyber AI mascot:
 - **Enterprise Data Table:** AG Grid Community v36.0.0 (`ag-grid-react`, `ag-grid-community`)
 - **Payments Engine:** PayPal Orders v2 REST API Sandbox (`@paypal/paypal-js`)
 - **Cryptography:** Ed25519 Elliptic Curve Nonces & Nonce Authorization Proofs
-- **Voice & Accessibility:** Web Speech API (`SpeechSynthesisUtterance`), Siri Fluid Audio Waveform
-- **Video Pipeline:** 1080p Full HD 3D Kinetic Perspective Renderer (Python, Pillow, NumPy, FFMPEG, Edge-TTS)
+- **Voice & Accessibility:** Two-Way Web Speech API (`SpeechRecognition` / `webkitSpeechRecognition` with live microphone streaming + `SpeechSynthesisUtterance` natural audio response), Siri Fluid 16-Band Waveform Equalizer
+- **Video Pipeline:** 1080p Full HD Keynote Cinematography (Python, Pillow, NumPy, FFMPEG, Neural TTS Narration, Zero-Cutoff High-Speed Compositor)
 
 ---
 

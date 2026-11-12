@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Send,
   Sparkles,
@@ -62,6 +62,8 @@ interface NovaCanvasProps {
   theme?: 'light' | 'dark';
   controlledBudget?: number;
   controlledQuery?: string;
+  canvasView?: 'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads';
+  setCanvasView?: (view: 'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads') => void;
   onRegisterTriggerCheckout?: (fn: () => void) => void;
   onStartTour?: () => void;
 }
@@ -72,11 +74,15 @@ export default function NovaCanvas({
   theme = 'dark',
   controlledBudget,
   controlledQuery,
+  canvasView: propCanvasView,
+  setCanvasView: propSetCanvasView,
   onRegisterTriggerCheckout,
   onStartTour,
 }: NovaCanvasProps) {
   const isLight = theme === 'light';
-  const [canvasView, setCanvasView] = useState<'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads'>('all');
+  const [internalCanvasView, setInternalCanvasView] = useState<'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads'>('all');
+  const canvasView = propCanvasView ?? internalCanvasView;
+  const setCanvasView = propSetCanvasView ?? setInternalCanvasView;
 
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -89,6 +95,8 @@ export default function NovaCanvas({
   const [processingPayment, setProcessingPayment] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<any>(null);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [isListeningMic, setIsListeningMic] = useState(false);
+  const recognitionRef = useRef<any>(null);
   const [benchmarkModalOpen, setBenchmarkModalOpen] = useState(false);
 
   // Inspector & Architecture Node Selection State
@@ -219,35 +227,113 @@ export default function NovaCanvas({
     }
   };
 
-  const handleTriggerVoice = () => {
+  const executeVoiceArbitration = async (searchQuery: string) => {
     setIsVoiceActive(true);
     if (soundEnabled) playSound('agent');
-    setQuery('Find eco travel pack under $70 with 10% rebate');
+    setLoading(true);
 
-    const voicePrompt = 'Autonomous agent arbitrating AeroGlide Eco Travel Backpack under seventy dollars with ten percent rebate and zero dispute protection.';
-    if (soundEnabled) speakVoice(voicePrompt);
-
-    setTimeout(async () => {
-      try {
-        const res = await fetch('/api/agent/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: 'Find eco travel backpack under 70 dollars with discount',
-            mandate: { maxBudget: 70, ecoOnly: true, autoDiscount: true },
-          }),
-        });
-        const data = await res.json();
-        if (data.actionSteps) setAgentSteps(data.actionSteps);
-        if (data.replyText) {
-          setAgentReply(data.replyText);
+    try {
+      const res = await fetch('/api/agent/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: searchQuery,
+          mandate: { maxBudget: maxBudget || 70, ecoOnly, autoDiscount },
+        }),
+      });
+      const data = await res.json();
+      if (data.actionSteps) setAgentSteps(data.actionSteps);
+      if (data.replyText) {
+        setAgentReply(data.replyText);
+        if (soundEnabled) {
+          speakVoice(data.replyText, () => setIsVoiceActive(false));
         }
-        if (data.suggestedProducts && data.suggestedProducts.length > 0) {
-          setSelectedProduct(data.suggestedProducts[0]);
-        }
-      } catch (e) {}
+      }
+      if (data.suggestedProducts && data.suggestedProducts.length > 0) {
+        setSelectedProduct(data.suggestedProducts[0]);
+      } else if (filteredProducts.length > 0) {
+        setSelectedProduct(filteredProducts[0]);
+      }
+    } catch (err) {
+      console.error('Agent chat error:', err);
+    } finally {
+      setLoading(false);
       setTimeout(() => setIsVoiceActive(false), 4000);
-    }, 500);
+    }
+  };
+
+  const handleTriggerVoice = () => {
+    if (soundEnabled) playSound('click');
+
+    const SpeechRecognitionClass =
+      typeof window !== 'undefined'
+        ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+        : null;
+
+    if (SpeechRecognitionClass) {
+      try {
+        if (isListeningMic && recognitionRef.current) {
+          recognitionRef.current.stop();
+          setIsListeningMic(false);
+          setIsVoiceActive(false);
+          return;
+        }
+
+        const recognition = new SpeechRecognitionClass();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        recognitionRef.current = recognition;
+
+        setIsListeningMic(true);
+        setIsVoiceActive(true);
+        setQuery('Listening to microphone... speak now');
+
+        recognition.onresult = (event: any) => {
+          let currentTranscript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            currentTranscript += event.results[i][0].transcript;
+          }
+          if (currentTranscript) {
+            setQuery(currentTranscript);
+          }
+        };
+
+        recognition.onend = () => {
+          setIsListeningMic(false);
+          // If query was updated from speech, execute arbitration
+          setTimeout(() => {
+            setQuery((prev) => {
+              if (prev && !prev.startsWith('Listening to microphone')) {
+                executeVoiceArbitration(prev);
+                return prev;
+              } else {
+                const fallback = 'Find eco travel pack under $70 with 10% rebate';
+                executeVoiceArbitration(fallback);
+                return fallback;
+              }
+            });
+          }, 200);
+        };
+
+        recognition.onerror = () => {
+          setIsListeningMic(false);
+          const fallback = 'Find eco travel pack under $70 with 10% rebate';
+          setQuery(fallback);
+          executeVoiceArbitration(fallback);
+        };
+
+        recognition.start();
+        return;
+      } catch (err) {
+        console.warn('SpeechRecognition error, falling back:', err);
+      }
+    }
+
+    // High-intelligence demo fallback if browser has no mic permission
+    const fallback = 'Find eco travel pack under $70 with 10% rebate';
+    setQuery(fallback);
+    executeVoiceArbitration(fallback);
   };
 
   const handleSimulateReceiptScan = async () => {
@@ -561,135 +647,79 @@ export default function NovaCanvas({
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 space-y-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       
-      {/* 1-Click Judge Autopilot & Preset Scenarios Ribbon */}
-      <div className={`p-3.5 rounded-2xl border transition shadow-sm ${
-        isLight
-          ? 'bg-gradient-to-r from-blue-50 via-indigo-50 to-cyan-50 border-blue-200/90 text-slate-800'
-          : 'bg-gradient-to-r from-blue-950/40 via-indigo-950/30 to-cyan-950/40 border-blue-500/20 text-white'
-      }`}>
-        <div className="flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex items-center space-x-2 shrink-0">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-            <span className="text-xs font-black uppercase tracking-wider font-mono text-blue-600 dark:text-cyan-400">
-              ⚡ 1-Click Judge Autopilot Scenarios:
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {DEMO_SCENARIOS.map((sc) => (
-              <button
-                key={sc.id}
-                onClick={() => handleApplyScenario(sc)}
-                className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition cursor-pointer active:scale-95 ${
-                  selectedProduct.id === sc.product.id
-                    ? 'bg-[#0070BA] text-white shadow-md border-transparent'
-                    : isLight
-                    ? 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
-                    : 'bg-black/40 hover:bg-black/60 text-slate-300 hover:text-white border-white/10'
-                }`}
-              >
-                <span>{sc.title}</span>
-                <span className={`text-[9.5px] px-1.5 py-0.5 rounded-md border font-mono ${sc.badgeColor}`}>
-                  {sc.tag}
-                </span>
-              </button>
-            ))}
-
-            <button
-              onClick={() => setBenchmarkModalOpen(true)}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
-                isLight
-                  ? 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200'
-                  : 'bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
-              }`}
-            >
-              <BarChart3 className="w-3.5 h-3.5" />
-              <span>APCP vs Legacy Benchmark</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Interactive Module View Controller */}
-      <div className={`p-2 rounded-2xl border flex items-center justify-between gap-2 overflow-x-auto no-scrollbar text-xs font-bold transition shadow-sm ${
-        isLight ? 'bg-white border-slate-200 text-slate-700' : 'bg-[#0f172a] border-white/10 text-slate-200 shadow-xl'
-      }`}>
-        <div className="flex items-center space-x-1.5 shrink-0">
-          <span className={`text-[10.5px] uppercase font-mono px-2 font-bold shrink-0 ${isLight ? 'text-blue-700' : 'text-cyan-400'}`}>
-            Module Views:
-          </span>
-          {[
-            { id: 'all', label: '🌐 All Modules' },
-            { id: 'procure', label: '🛍️ Autonomous Procurement' },
-            { id: 'bidding', label: '🏷️ 3-Merchant Bidding' },
-            { id: 'dispute', label: '⚖️ Dispute Defense' },
-            { id: 'roi', label: '📈 ROI Calculator' },
-            { id: 'payloads', label: '🔒 PayPal v2 REST' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => {
-                if (soundEnabled) playSound('click');
-                setCanvasView(tab.id as any);
-              }}
-              className={`px-3 py-1.5 rounded-xl transition text-xs font-bold cursor-pointer flex items-center space-x-1 ${
-                canvasView === tab.id
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : isLight
-                    ? 'hover:bg-slate-100 text-slate-700'
-                    : 'hover:bg-white/10 text-slate-300'
-              }`}
-            >
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* SECTION 1: Autonomous Procurement Pipeline */}
       {(canvasView === 'all' || canvasView === 'procure') && (
         <>
-          {/* Hero Command Center & Fluid Voice Orb */}
-          <div className="text-center space-y-4 max-w-3xl mx-auto">
-        
-        {/* Animated Siri / Apple Style Voice Waveform Indicator */}
-        {isVoiceActive ? (
-          <div className="inline-flex items-center space-x-3 px-4 py-2 rounded-full bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-xs font-mono font-bold animate-in fade-in duration-200 shadow-lg shadow-cyan-500/20">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-400 animate-ping" />
-            <span className={isLight ? 'text-blue-900 font-bold' : 'text-cyan-300 font-bold'}>
-              PayAgent Neural Voice Synthesizer Active
-            </span>
-            <div className="flex items-center space-x-1 h-5 ml-2">
-              <span className="w-1.5 h-3 bg-cyan-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
-              <span className="w-1.5 h-6 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
-              <span className="w-1.5 h-4 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.4s]" />
-              <span className="w-1.5 h-5 bg-cyan-300 rounded-full animate-bounce [animation-delay:-0.2s]" />
-              <span className="w-1.5 h-2.5 bg-emerald-400 rounded-full animate-bounce" />
+          {/* Executive Hero */}
+          <div className="text-center space-y-3.5 max-w-3xl mx-auto pt-2">
+            
+            {/* Live Status Badge */}
+            {isVoiceActive ? (
+              <div className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-cyan-300 text-xs font-mono font-bold animate-in fade-in duration-200">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+                <span>PayAgent Neural Voice Synthesizer Active</span>
+              </div>
+            ) : (
+              <div className={`inline-flex items-center space-x-2 px-3.5 py-1 rounded-full border text-xs font-semibold ${
+                isLight
+                  ? 'bg-blue-50 border-blue-200 text-blue-700'
+                  : 'bg-blue-500/10 border-blue-500/20 text-cyan-300'
+              }`}>
+                <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
+                <span>APCP Cryptographic Spending Enclave &bull; Orders v2 Sandbox</span>
+              </div>
+            )}
+
+            <h1 className={`text-3xl sm:text-4xl font-black tracking-tight ${
+              isLight ? 'text-slate-900' : 'text-white'
+            }`}>
+              Autonomous Commerce Terminal
+            </h1>
+            <p className={`text-sm max-w-2xl mx-auto leading-relaxed ${
+              isLight ? 'text-slate-600' : 'text-slate-400'
+            }`}>
+              Define your non-bypassable spend ceiling, command your purchasing agent via natural voice or prompt, and settle checkouts with cryptographic non-repudiation on PayPal.
+            </p>
+
+            {/* Quick Demo Preset Chips */}
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs">
+              <span className={`text-[11px] font-mono font-bold uppercase tracking-wider ${
+                isLight ? 'text-slate-500' : 'text-slate-400'
+              }`}>
+                Presets:
+              </span>
+              {DEMO_SCENARIOS.map((sc) => (
+                <button
+                  key={sc.id}
+                  onClick={() => handleApplyScenario(sc)}
+                  className={`flex items-center space-x-1.5 px-3 py-1 rounded-full border transition cursor-pointer active:scale-95 text-xs font-semibold ${
+                    selectedProduct.id === sc.product.id
+                      ? 'bg-[#0070BA] text-white shadow-sm border-transparent'
+                      : isLight
+                      ? 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-2xs'
+                      : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
+                  }`}
+                >
+                  <span>{sc.title}</span>
+                  <span className="text-[10px] opacity-75 font-mono">{sc.tag}</span>
+                </button>
+              ))}
+
+              <button
+                onClick={() => setBenchmarkModalOpen(true)}
+                className={`flex items-center space-x-1 px-3 py-1 rounded-full border transition cursor-pointer text-xs font-semibold ${
+                  isLight
+                    ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                    : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
+                }`}
+              >
+                <BarChart3 className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400" />
+                <span>Benchmark</span>
+              </button>
             </div>
           </div>
-        ) : (
-          <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full border text-xs font-semibold ${
-            isLight
-              ? 'bg-blue-50 border-blue-200 text-blue-700'
-              : 'bg-blue-500/10 border-blue-500/20 text-blue-300'
-          }`}>
-            <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
-            <span>Autonomous Multi-Modal Commerce Canvas &bull; APCP Protocol</span>
-          </div>
-        )}
-
-        <h1 className={`text-3xl sm:text-4xl font-black tracking-tight ${
-          isLight ? 'text-slate-900' : 'text-white'
-        }`}>
-          What can PayAgent procure for you?
-        </h1>
-        <p className={`text-sm max-w-xl mx-auto leading-relaxed ${
-          isLight ? 'text-slate-600' : 'text-slate-400'
-        }`}>
-          State your product criteria, set your spending ceiling, and let our autonomous agent negotiate pricing and stage checkouts via <strong className={isLight ? 'text-blue-700' : 'text-cyan-300'}>PayPal Sandbox</strong>.
-        </p>
 
         {/* Command Search Bar */}
         <form
@@ -713,17 +743,21 @@ export default function NovaCanvas({
             <button
               type="button"
               onClick={handleTriggerVoice}
-              title="Voice mandate: speaks aloud and executes arbitration"
+              title="Voice mandate: live mic transcription and natural speech reply"
               className={`p-2 rounded-xl border text-xs font-semibold flex items-center space-x-1.5 transition cursor-pointer active:scale-95 ${
-                isVoiceActive
-                  ? 'bg-rose-500/20 border-rose-500/50 text-rose-400 animate-pulse'
+                isListeningMic
+                  ? 'bg-rose-500/20 border-rose-500/50 text-rose-400 animate-pulse ring-2 ring-rose-500/30'
+                  : isVoiceActive
+                  ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400 animate-pulse'
                   : isLight
                   ? 'bg-cyan-50 hover:bg-cyan-100 border-cyan-200 text-cyan-800'
                   : 'bg-cyan-500/10 hover:bg-cyan-500/20 border-cyan-500/30 text-cyan-300'
               }`}
             >
-              <Mic className="w-4 h-4 text-cyan-500" />
-              <span className="hidden sm:inline">Voice Agent</span>
+              <Mic className={`w-4 h-4 ${isListeningMic ? 'text-rose-500 animate-bounce' : 'text-cyan-500'}`} />
+              <span className="hidden sm:inline">
+                {isListeningMic ? 'Listening...' : isVoiceActive ? 'Speaking...' : 'Voice Agent'}
+              </span>
             </button>
             <button
               type="button"
@@ -768,7 +802,6 @@ export default function NovaCanvas({
             </button>
           ))}
         </div>
-      </div>
 
       {/* Spending Mandate Strip */}
       <div id="shopper-mandate" className={`rounded-3xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 border transition scroll-mt-20 ${
@@ -1344,7 +1377,7 @@ export default function NovaCanvas({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         
         <div className={`p-5 rounded-3xl border transition shadow-sm ${
-          isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
+          isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-slate-900/90 border-slate-800 shadow-xl text-white'
         }`}>
           <div className="flex items-center justify-between pb-2">
             <span className={`text-xs font-bold uppercase tracking-wider font-mono ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -1364,7 +1397,7 @@ export default function NovaCanvas({
         </div>
 
         <div className={`p-5 rounded-3xl border transition shadow-sm ${
-          isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
+          isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-slate-900/90 border-slate-800 shadow-xl text-white'
         }`}>
           <div className="flex items-center justify-between pb-2">
             <span className={`text-xs font-bold uppercase tracking-wider font-mono ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -1384,7 +1417,7 @@ export default function NovaCanvas({
         </div>
 
         <div className={`p-5 rounded-3xl border transition shadow-sm ${
-          isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
+          isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-slate-900/90 border-slate-800 shadow-xl text-white'
         }`}>
           <div className="flex items-center justify-between pb-2">
             <span className={`text-xs font-bold uppercase tracking-wider font-mono ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -1404,7 +1437,7 @@ export default function NovaCanvas({
         </div>
 
         <div className={`p-5 rounded-3xl border transition shadow-sm ${
-          isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
+          isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-slate-900/90 border-slate-800 shadow-xl text-white'
         }`}>
           <div className="flex items-center justify-between pb-2">
             <span className={`text-xs font-bold uppercase tracking-wider font-mono ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -1531,7 +1564,7 @@ export default function NovaCanvas({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           
           <div className={`p-6 rounded-3xl border transition shadow-sm space-y-3.5 ${
-            isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
+            isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-slate-900/90 border-slate-800 shadow-xl text-white'
           }`}>
             <div className="w-10 h-10 rounded-2xl bg-blue-500/15 text-blue-600 dark:text-cyan-400 flex items-center justify-center">
               <Sliders className="w-5 h-5" />
@@ -1548,7 +1581,7 @@ export default function NovaCanvas({
           </div>
 
           <div className={`p-6 rounded-3xl border transition shadow-sm space-y-3.5 ${
-            isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
+            isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-slate-900/90 border-slate-800 shadow-xl text-white'
           }`}>
             <div className="w-10 h-10 rounded-2xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
               <Cpu className="w-5 h-5" />
@@ -1565,7 +1598,7 @@ export default function NovaCanvas({
           </div>
 
           <div className={`p-6 rounded-3xl border transition shadow-sm space-y-3.5 ${
-            isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
+            isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-slate-900/90 border-slate-800 shadow-xl text-white'
           }`}>
             <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <ShieldCheck className="w-5 h-5" />

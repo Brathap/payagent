@@ -1,13 +1,28 @@
 'use client';
 
 import React from 'react';
-import { BarChart3, Settings, Sparkles, Volume2, VolumeX, ShieldCheck, Terminal, Layers, Sun, Moon } from 'lucide-react';
+import {
+  ShoppingBag,
+  Scale,
+  ShieldCheck,
+  BarChart3,
+  Terminal,
+  Layers,
+  Sun,
+  Moon,
+  Volume2,
+  VolumeX,
+  Settings,
+  Sparkles,
+} from 'lucide-react';
 import Logo from './Logo';
 import { playSound } from '@/lib/sounds';
 
+export type NavTab = 'canvas' | 'bidding' | 'dispute' | 'merchant' | 'api';
+
 interface NavbarProps {
-  activeTab: 'canvas' | 'merchant' | 'api';
-  setActiveTab: (tab: 'canvas' | 'merchant' | 'api') => void;
+  activeTab: NavTab;
+  setActiveTab: (tab: NavTab) => void;
   onOpenSettings: () => void;
   onOpenProtocol: () => void;
   soundEnabled: boolean;
@@ -28,7 +43,7 @@ export default function Navbar({
   setTheme,
   onStartTour,
 }: NavbarProps) {
-  const switchTab = (tab: 'canvas' | 'merchant' | 'api') => {
+  const switchTab = (tab: NavTab) => {
     if (soundEnabled) playSound('click');
     setActiveTab(tab);
   };
@@ -41,139 +56,157 @@ export default function Navbar({
 
   const isLight = theme === 'light';
 
+  const navItems = [
+    { id: 'canvas' as NavTab, label: 'Shopper Terminal', icon: ShoppingBag, desc: 'Autonomous Purchasing' },
+    { id: 'bidding' as NavTab, label: 'Bidding Matrix', icon: Scale, desc: '3-Merchant Reverse RFQ' },
+    { id: 'dispute' as NavTab, label: 'Dispute Shield', icon: ShieldCheck, desc: '304ms Resolution Defense' },
+    { id: 'merchant' as NavTab, label: 'AG Grid Hub', icon: BarChart3, desc: 'Virtualized Telemetry' },
+    { id: 'api' as NavTab, label: 'REST API', icon: Terminal, desc: 'PayPal Orders v2' },
+  ];
+
   return (
     <header className={`sticky top-0 z-50 backdrop-blur-xl border-b transition-colors duration-200 ${
-      isLight ? 'bg-white/90 border-slate-200/80 text-slate-800' : 'bg-[#060911]/90 border-white/5 text-white'
+      isLight ? 'bg-white/95 border-slate-200/90 text-slate-800' : 'bg-[#060911]/95 border-slate-800 text-white'
     }`}>
-      {/* Top telemetry line */}
-      <div className={`border-b px-4 py-1 flex items-center justify-between text-[10.5px] transition-colors ${
-        isLight ? 'bg-slate-100/70 border-slate-200 text-slate-600' : 'bg-black/40 border-white/[0.04] text-slate-400'
+      {/* Top Institutional Hackathon Status Line */}
+      <div className={`border-b px-4 py-1.5 flex items-center justify-between text-[11px] transition-colors ${
+        isLight ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-black/40 border-slate-800 text-slate-400'
       }`}>
         <div className="flex items-center space-x-2 truncate">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shrink-0" />
-          <span className="font-mono text-blue-600 dark:text-cyan-400 font-bold tracking-wider shrink-0">PAYPAL AI HACKATHON 2026</span>
-          <span className="hidden sm:inline opacity-40">&bull;</span>
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shrink-0" />
+          <span className="font-mono text-blue-600 dark:text-cyan-400 font-bold tracking-wider shrink-0">
+            PAYPAL AI HACKATHON 2026
+          </span>
+          <span className="hidden sm:inline text-slate-400">&bull;</span>
           <span className="hidden sm:inline truncate">
-            PayPal Orders v2 Sandbox &bull; AG Grid Community v36 &bull; APCP Protocol
+            Agentic Payment Consent Protocol (APCP) &bull; Orders v2 REST &bull; AG Grid Community v36
           </span>
         </div>
-        <div className="flex items-center space-x-1.5 font-mono text-[10px] text-emerald-600 dark:text-emerald-400 shrink-0 font-semibold">
-          <ShieldCheck className="w-3 h-3" />
-          <span className="hidden xs:inline">SANDBOX GATEWAY:</span>
-          <span>ONLINE</span>
+        <div className="flex items-center space-x-3 font-mono text-[10px] shrink-0">
+          <span className="flex items-center space-x-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span>ED25519 ENCLAVE: VERIFIED</span>
+          </span>
+          <span className="hidden md:flex items-center space-x-1 text-blue-600 dark:text-cyan-400 font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            <span>PAYPAL SANDBOX: ONLINE</span>
+          </span>
         </div>
       </div>
 
-      {/* Main navigation header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      {/* Main Navigation Bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
-        {/* Brand with authentic clean Logo */}
-        <div className="flex items-center space-x-3 shrink-0">
-          <Logo size={40} />
+        {/* Brand Logo & Title */}
+        <div className="flex items-center space-x-3 shrink-0 cursor-pointer" onClick={() => switchTab('canvas')}>
+          <Logo size={36} />
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className={`font-black text-xl tracking-tight ${isLight ? 'text-slate-900' : 'bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent'}`}>
-                PayPal
+              <span className={`font-black text-lg tracking-tight ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                PayAgent
               </span>
-              <span className="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm">
+              <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-[#0070BA] text-white">
                 NOVA
               </span>
             </div>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:block font-mono">
-              Agentic Commerce &bull; Autonomous Payments
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden lg:block font-mono">
+              Autonomous Commerce Protocol
             </p>
           </div>
         </div>
 
-        {/* 3 Main View Tabs */}
-        <div className={`flex items-center p-1 rounded-2xl border transition-colors ${
-          isLight ? 'bg-slate-100/90 border-slate-200' : 'bg-slate-900/90 border-white/10'
+        {/* Workspace Switcher Tabs */}
+        <nav className={`hidden md:flex items-center p-1 rounded-2xl border transition-colors ${
+          isLight ? 'bg-slate-100/90 border-slate-200' : 'bg-slate-900 border-slate-800'
         }`}>
-          <button
-            onClick={() => switchTab('canvas')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-              activeTab === 'canvas'
-                ? 'bg-[#0070BA] text-white shadow-md'
-                : isLight ? 'text-slate-600 hover:text-slate-900 hover:bg-white/60' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
-            <span>Agentic Canvas</span>
-          </button>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => switchTab(item.id)}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition cursor-pointer ${
+                  isActive
+                    ? 'bg-[#0070BA] text-white shadow-sm'
+                    : isLight
+                    ? 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : isLight ? 'text-slate-500' : 'text-slate-400'}`} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
 
-          <button
-            onClick={() => switchTab('merchant')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-              activeTab === 'merchant'
-                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md'
-                : isLight ? 'text-slate-600 hover:text-slate-900 hover:bg-white/60' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+        {/* Mobile View Selector Dropdown */}
+        <div className="md:hidden flex-1 max-w-[160px]">
+          <select
+            value={activeTab}
+            onChange={(e) => switchTab(e.target.value as NavTab)}
+            className={`w-full text-xs font-bold px-2 py-1.5 rounded-xl border ${
+              isLight ? 'bg-slate-100 border-slate-200 text-slate-800' : 'bg-slate-900 border-slate-800 text-white'
             }`}
           >
-            <BarChart3 className="w-3.5 h-3.5 text-indigo-300" />
-            <span>AG Grid Terminal</span>
-          </button>
-
-          <button
-            onClick={() => switchTab('api')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-              activeTab === 'api'
-                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
-                : isLight ? 'text-slate-600 hover:text-slate-900 hover:bg-white/60' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-            }`}
-          >
-            <Terminal className="w-3.5 h-3.5 text-cyan-300" />
-            <span className="hidden sm:inline">Protocol</span>
-            <span>API</span>
-          </button>
+            {navItems.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.label}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Utility controls */}
+        {/* Utility Actions */}
         <div className="flex items-center space-x-2 shrink-0">
           
-          {/* Live Interactive Guided Tour */}
+          {/* Guided Tour Launcher */}
           {onStartTour && (
             <button
               onClick={() => {
                 if (soundEnabled) playSound('success');
                 onStartTour();
               }}
-              title="Launch Autonomous Interactive Tour"
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs shadow-lg shadow-blue-500/25 transition cursor-pointer active:scale-95 animate-pulse"
+              title="Launch Guided Product Tour"
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-sm transition cursor-pointer active:scale-95"
             >
-              <Sparkles className="w-3.5 h-3.5 text-cyan-200" />
-              <span className="hidden sm:inline">Live Tour</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Tour</span>
             </button>
           )}
 
-          {/* Light / Dark Mode Toggle */}
+          {/* Theme Switcher */}
           <button
             onClick={toggleTheme}
             title={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
             className={`p-2 rounded-xl border transition cursor-pointer ${
               isLight
-                ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-amber-600'
-                : 'bg-slate-900/80 hover:bg-slate-800 border-white/5 text-amber-300'
+                ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700'
+                : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-amber-300'
             }`}
           >
             {isLight ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           </button>
 
+          {/* Protocol Specs Modal */}
           <button
             onClick={() => {
               if (soundEnabled) playSound('click');
               onOpenProtocol();
             }}
-            title="View Protocol Specs & Architecture"
-            className={`hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
+            title="APCP Specification & Cryptographic Flow"
+            className={`hidden sm:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
               isLight
                 ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700'
-                : 'bg-white/5 hover:bg-white/10 border-white/10 text-slate-300 hover:text-white'
+                : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300 hover:text-white'
             }`}
           >
             <Layers className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400" />
             <span>Specs</span>
           </button>
 
+          {/* Sound FX Toggle */}
           <button
             onClick={() => {
               const next = !soundEnabled;
@@ -183,23 +216,24 @@ export default function Navbar({
             title={soundEnabled ? 'Fintech SFX Enabled' : 'Fintech SFX Muted'}
             className={`p-2 rounded-xl border transition cursor-pointer ${
               soundEnabled
-                ? 'bg-blue-100 dark:bg-blue-950/60 border-blue-300 dark:border-blue-500/40 text-blue-600 dark:text-blue-400'
-                : isLight ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-900/80 border-white/5 text-slate-500'
+                ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-200 dark:border-blue-900 text-blue-600 dark:text-cyan-400'
+                : isLight ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-900 border-slate-800 text-slate-500'
             }`}
           >
             {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </button>
 
+          {/* Sandbox Credentials Modal */}
           <button
             onClick={() => {
               if (soundEnabled) playSound('click');
               onOpenSettings();
             }}
-            title="Configure Credentials"
+            title="PayPal Sandbox API Settings"
             className={`p-2 rounded-xl border transition cursor-pointer ${
               isLight
                 ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700'
-                : 'bg-slate-900/80 border-white/5 hover:border-white/10 text-slate-300 hover:text-white'
+                : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300 hover:text-white'
             }`}
           >
             <Settings className="w-4 h-4" />

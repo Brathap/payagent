@@ -4,7 +4,8 @@
 > **Categories Targeted:** Best Use of Agentic Commerce • Best Use of AG Grid • Best Use of PayPal + AI  
 > **Repository:** [https://github.com/Brathap/payagent](https://github.com/Brathap/payagent)  
 > **Live Demo:** `http://localhost:3001`  
-> **Video Demo (1080p 3D Animated):** `http://localhost:3001/payagent_demo.mp4`  
+> **APCP Protocol Blueprint:** `http://localhost:3001/protocol`  
+> **Keynote Video Demo (1080p Keynote Presentation):** `http://localhost:3001/payagent_demo.mp4`  
 > **License:** MIT License  
 
 ---

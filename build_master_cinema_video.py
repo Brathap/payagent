@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
-PayAgent Master Cinema 3D Demo Video Builder
-Award-winning Silicon Valley Product Launch Cinematography
-- 7 Distinct Pages & Rich Surfaces
-- Large, Ultra-Sharp UI Displays (1300-1360px wide, 100% legible)
-- Smooth 3D Camera Kinematics (dolly forward, yaw/pitch drift)
-- Side-by-Side Floating Holographic Callout Cards
-- Animated macOS Cursor with Click Ripples & Slider Motions
-- Dynamic Timed Subtitles (never cut off, perfectly synchronized)
-- Sentinel AI Cyber Avatar with glowing visor & live audio waveform
+PayAgent Master Cinema Demo Video Builder
+Award-Winning Silicon Valley Keynote Cinematography:
+- 7 Distinct Pages & Rich Software Surfaces (APCP Protocol Blueprint, Shopper Canvas, Swarm Trace, 3-Merchant Bidding, AG Grid Community v36, Dispute Defense, PayPal Orders v2 REST API)
+- 100% Crisp, Tack-Sharp Typography (Zero perspective blur or cut-off text)
+- Subtle Cinematic Ken Burns Push-In (Smooth 1.00 -> 1.025 camera glide)
+- Floating Glass Callout Cards on the Right
+- Animated macOS Cursor with Spline Motion & Click Ripples
+- Timed Subtitles & Animated Sentinel AI Companion Avatar with Audio Waveform
 """
 
 import os, sys, math, time, subprocess, json
@@ -25,12 +24,12 @@ FINAL_OUTPUT = "/home/Brathap/payagent/payagent_demo.mp4"
 PUBLIC_OUTPUT = "/home/Brathap/payagent/public/payagent_demo.mp4"
 
 # Fonts
-FONT_TITLE = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Bold.ttf", 26)
-FONT_HEAD = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Bold.ttf", 20)
-FONT_SUB = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Regular.ttf", 15)
-FONT_BADGE = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Bold.ttf", 13)
-FONT_TINY = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Regular.ttf", 12)
-FONT_MONO = ImageFont.truetype("/usr/share/fonts/TTF/JetBrainsMonoNL-BoldItalic.ttf", 14)
+FONT_TITLE = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Bold.ttf", 24)
+FONT_HEAD = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Bold.ttf", 19)
+FONT_SUB = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Regular.ttf", 14)
+FONT_BADGE = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Bold.ttf", 12)
+FONT_TINY = ImageFont.truetype("/usr/share/fonts/TTF/Roboto-Regular.ttf", 11)
+FONT_MONO = ImageFont.truetype("/usr/share/fonts/TTF/JetBrainsMonoNL-BoldItalic.ttf", 13)
 
 SCENES = [
     {
@@ -38,10 +37,10 @@ SCENES = [
         "ch": "01",
         "tag": "APCP PROTOCOL SPECIFICATION",
         "title": "The Agentic Payment Consent Protocol (APCP)",
-        "type": "modal_crop",
-        "src": "/home/Brathap/payagent/public/screens/screen_protocol_modal.png",
-        "crop": (500, 100, 1420, 960),
-        "size": (1300, 750),
+        "type": "full",
+        "src": "/home/Brathap/payagent/public/screens/screen_protocol_page.png",
+        "size": (1420, 780),
+        "url": "https://payagent.ai/protocol • APCP Protocol Specification",
         "voice": "/tmp/payagent_3d_claude_video/voice_01.mp3",
         "callout": {
             "tag": "GUARANTEE 01",
@@ -69,7 +68,8 @@ SCENES = [
         "title": "Natural Voice AI & Non-Bypassable Budget Clamp",
         "type": "full",
         "src": "/home/Brathap/payagent/public/screens/screen_canvas_hero.png",
-        "size": (1360, 760),
+        "size": (1420, 780),
+        "url": "https://payagent.ai/canvas • Autonomous Shopper & Spending Clamp",
         "voice": "/tmp/payagent_3d_claude_video/voice_02.mp3",
         "callout": {
             "tag": "SECURITY 02",
@@ -94,9 +94,10 @@ SCENES = [
         "ch": "03",
         "tag": "SUB-50ms REASONING TERMINAL",
         "title": "Deterministic Swarm Consensus & Thought Trace",
-        "type": "wide",
-        "src": "/home/Brathap/payagent/public/screens/crop_reasoning.png",
-        "size": (1360, 580),
+        "type": "swarm_trace",
+        "src": "/home/Brathap/payagent/public/screens/screen_canvas_hero.png",
+        "size": (1420, 780),
+        "url": "https://payagent.ai/reasoning • Sub-50ms Swarm Execution Tree",
         "voice": "/tmp/payagent_3d_claude_video/voice_03.mp3",
         "callout": {
             "tag": "TELEMETRY 03",
@@ -121,24 +122,25 @@ SCENES = [
         "ch": "04",
         "tag": "MULTI-MERCHANT REVERSE AUCTION",
         "title": "Multi-Agent Bidding & Instant Rebate Optimization",
-        "type": "wide",
-        "src": "/home/Brathap/payagent/public/screens/crop_bidding.png",
-        "size": (1360, 580),
+        "type": "full",
+        "src": "/home/Brathap/payagent/public/screens/screen_bidding.png",
+        "size": (1420, 780),
+        "url": "https://payagent.ai/bidding • Multi-Merchant Autonomous Matrix",
         "voice": "/tmp/payagent_3d_claude_video/voice_04.mp3",
         "callout": {
             "tag": "ARBITRATION 04",
             "title": "Autonomous Bidding",
             "bullets": [
                 "3 competing suppliers bid in real time",
-                "FastShip Retail wins at $89.50",
-                "8.5% instant rebate ($8.50 saved)"
+                "EcoSupply Co wins with 10% rebate",
+                "$80.10 settled via PayPal Orders v2"
             ],
             "color": (16, 185, 129, 255)
         },
         "subtitles": [
             (0.0, 4.5, "The Shopper Agent orchestrates an autonomous multi-merchant reverse auction."),
             (4.5, 10.5, "Three competing suppliers bid: EcoSupply Co, Global TechDirect, and FastShip Retail."),
-            (10.5, 99.0, "FastShip Retail wins at $89.50 with an 8.5% instant rebate applied under the user's budget.")
+            (10.5, 99.0, "EcoSupply Co wins with a 10% partner concession applied under the user's budget.")
         ],
         "cursor_path": [(320, 500), (640, 420), (1080, 420), (1120, 420)],
         "click_at": [8.0, 12.5]
@@ -150,7 +152,8 @@ SCENES = [
         "title": "Enterprise Financial Settlement & Audit Trail",
         "type": "full",
         "src": "/home/Brathap/payagent/public/screens/screen_merchant_audit.png",
-        "size": (1360, 760),
+        "size": (1420, 780),
+        "url": "https://payagent.ai/merchant • AG Grid Enterprise Telemetry",
         "voice": "/tmp/payagent_3d_claude_video/voice_05.mp3",
         "callout": {
             "tag": "AUDIT 05",
@@ -175,9 +178,10 @@ SCENES = [
         "ch": "06",
         "tag": "PAYPAL RESOLUTION DEFENSE",
         "title": "1-Click Dispute Shield & Carrier Telematics",
-        "type": "wide",
-        "src": "/home/Brathap/payagent/public/screens/crop_dispute.png",
-        "size": (1360, 580),
+        "type": "full",
+        "src": "/home/Brathap/payagent/public/screens/screen_dispute.png",
+        "size": (1420, 780),
+        "url": "https://payagent.ai/dispute • Instant 304ms Resolution Center",
         "voice": "/tmp/payagent_3d_claude_video/voice_06.mp3",
         "callout": {
             "tag": "DEFENSE 06",
@@ -185,7 +189,7 @@ SCENES = [
             "bullets": [
                 "Matches Ed25519 nonce to PayPal Capture ID",
                 "Packages court-ready proof in 304ms",
-                "Saves merchants up to $420/month"
+                "100% Merchant Defense Cleared"
             ],
             "color": (225, 29, 72, 255)
         },
@@ -205,7 +209,8 @@ SCENES = [
         "title": "Live Sandbox Authorization & Capture Playground",
         "type": "full",
         "src": "/home/Brathap/payagent/public/screens/screen_api_playground.png",
-        "size": (1360, 760),
+        "size": (1420, 780),
+        "url": "https://payagent.ai/api • PayPal Orders v2 Sandbox REST API",
         "voice": "/tmp/payagent_3d_claude_video/voice_07.mp3",
         "callout": {
             "tag": "REST API 07",
@@ -239,30 +244,31 @@ def draw_3d_grid(draw, horizon_y=280, vp_x=960):
     for i in range(1, 25):
         ratio = (i / 25.0) ** 2.4
         y = int(horizon_y + ratio * (HEIGHT - horizon_y))
-        draw.line([(0, y), (WIDTH, y)], fill=(226, 232, 240, int(50 + ratio * 130)), width=1)
+        alpha = int(ratio * 150)
+        draw.line([(0, y), (WIDTH, y)], fill=(203, 213, 225, alpha), width=1)
 
 def pre_render_ui_card(sdef):
     cw, ch = sdef['size']
-    pad = 20
+    pad = 24
     win = Image.new('RGBA', (cw, ch), (255, 255, 255, 255))
     wdraw = ImageDraw.Draw(win)
     
-    # Chrome bar
+    # macOS Chrome bar
     wdraw.rectangle([0, 0, cw, 42], fill=(241, 245, 249, 255))
     wdraw.line([0, 42, cw, 42], fill=(226, 232, 240, 255), width=1)
-    wdraw.ellipse([16, 15, 28, 27], fill=(239, 68, 68, 255))
-    wdraw.ellipse([34, 15, 46, 27], fill=(245, 158, 11, 255))
-    wdraw.ellipse([52, 15, 64, 27], fill=(16, 185, 129, 255))
+    wdraw.ellipse([16, 14, 28, 26], fill=(239, 68, 68, 255))
+    wdraw.ellipse([34, 14, 46, 26], fill=(245, 158, 11, 255))
+    wdraw.ellipse([52, 14, 64, 26], fill=(16, 185, 129, 255))
     
-    wdraw.rounded_rectangle([80, 8, cw - 240, 34], radius=6, fill=(255, 255, 255, 255), outline=(203, 213, 225, 255), width=1)
-    wdraw.text((96, 11), f'🔒 https://payagent.ai/{sdef["id"]} • PayPal Sandbox v2 Verified', fill=(71, 85, 105, 255), font=FONT_BADGE)
+    wdraw.rounded_rectangle([80, 7, cw - 260, 33], radius=6, fill=(255, 255, 255, 255), outline=(203, 213, 225, 255), width=1)
+    wdraw.text((96, 10), f'🔒 {sdef.get("url", "https://payagent.ai")}', fill=(71, 85, 105, 255), font=FONT_BADGE)
     
     src_img = Image.open(sdef['src'])
-    if sdef['type'] == 'modal_crop':
-        crop_img = src_img.crop(sdef['crop'])
+    if sdef['type'] == 'swarm_trace':
+        # Crop directly to the Swarm Execution Pipeline without cutting words
+        # In a 1920x1080 screenshot, the pipeline spans x=60..1860, y=260..940
+        crop_img = src_img.crop((60, 260, 1860, 940))
         scaled_img = crop_img.resize((cw, ch - 42), Image.Resampling.LANCZOS)
-    elif sdef['type'] == 'wide':
-        scaled_img = src_img.resize((cw, ch - 42), Image.Resampling.LANCZOS)
     else: # full
         scale = cw / float(src_img.width)
         scaled_h = int(src_img.height * scale)
@@ -271,82 +277,78 @@ def pre_render_ui_card(sdef):
     win.paste(scaled_img, (0, 42))
     wdraw.rounded_rectangle([0, 0, cw - 1, ch - 1], radius=16, outline=(203, 213, 225, 220), width=2)
     
-    # Base with shadow
+    # Shadow base
     total_w = cw + pad * 2
     total_h = ch + pad * 2
     base = Image.new('RGBA', (total_w, total_h), (0, 0, 0, 0))
     
     shadow_mask = Image.new('RGBA', (total_w, total_h), (0, 0, 0, 0))
     sdraw = ImageDraw.Draw(shadow_mask)
-    sdraw.rounded_rectangle([pad + 4, pad + 12, pad + cw + 4, pad + ch + 12], radius=16, fill=(15, 23, 42, 70))
+    sdraw.rounded_rectangle([pad + 4, pad + 12, pad + cw + 4, pad + ch + 12], radius=16, fill=(15, 23, 42, 60))
     shadow_blur = shadow_mask.filter(ImageFilter.GaussianBlur(16))
     base.paste(shadow_blur, (0, 0), shadow_blur)
     
     base.paste(win, (pad, pad))
-    bgra = cv2.cvtColor(np.array(base), cv2.COLOR_RGBA2BGRA)
-    return bgra, total_w, total_h
+    return base, total_w, total_h
 
 def pre_render_callout_card(cinfo):
-    fw, fh = 430, 180
-    card = Image.new('RGBA', (fw + 8, fh + 12), (0, 0, 0, 0))
+    cw, ch = 390, 270
+    card = Image.new('RGBA', (cw, ch), (255, 255, 255, 250))
     cdraw = ImageDraw.Draw(card)
     
-    # Shadow
-    cdraw.rounded_rectangle([4, 8, fw + 4, fh + 8], radius=14, fill=(15, 23, 42, 35))
-    # Body
-    cdraw.rounded_rectangle([0, 0, fw, fh], radius=14, fill=(255, 255, 255, 252), outline=cinfo['color'], width=2)
-    # Tag
-    cdraw.rounded_rectangle([16, 16, 170, 44], radius=6, fill=cinfo['color'][:3] + (30,))
-    cdraw.text((24, 22), cinfo['tag'], fill=cinfo['color'], font=FONT_BADGE)
+    # Outer subtle glow border
+    cdraw.rounded_rectangle([0, 0, cw - 1, ch - 1], radius=20, fill=(255, 255, 255, 252), outline=(203, 213, 225, 255), width=2)
+    
+    # Accent color pill badge
+    col = cinfo['color']
+    pill_fill = col[:3] + (25,)
+    cdraw.rounded_rectangle([18, 18, 140, 42], radius=6, fill=pill_fill, outline=col[:3] + (120,), width=1)
+    cdraw.text((26, 23), cinfo['tag'], fill=col, font=FONT_BADGE)
+    
     # Title
-    cdraw.text((16, 54), cinfo['title'], fill=(15, 23, 42, 255), font=FONT_HEAD)
+    cdraw.text((20, 56), cinfo['title'], fill=(15, 23, 42, 255), font=FONT_TITLE)
+    
     # Bullets
-    y_b = 88
-    for b in cinfo['bullets']:
-        cdraw.ellipse([18, y_b + 5, 24, y_b + 11], fill=cinfo['color'])
-        cdraw.text((32, y_b), b, fill=(30, 41, 59, 255), font=FONT_SUB)
-        y_b += 26
+    for bi, b in enumerate(cinfo['bullets']):
+        cdraw.text((20, 106 + bi * 34), f"• {b}", fill=(51, 65, 85, 255), font=FONT_SUB)
         
-    return card, fw, fh
+    return card, cw, ch
 
 def draw_cursor(draw, x, y, click_progress=0.0):
-    # macOS style cursor
-    pts = [(x, y), (x, y + 22), (x + 6, y + 17), (x + 13, y + 25), (x + 16, y + 22), (x + 9, y + 14), (x + 17, y + 14)]
-    draw.polygon(pts, fill=(255, 255, 255, 255), outline=(15, 23, 42, 255))
+    if click_progress > 0.0 and click_progress < 1.0:
+        r = int(click_progress * 30)
+        alpha = int((1.0 - click_progress) * 220)
+        draw.ellipse([x - r, y - r, x + r, y + r], outline=(0, 112, 186, alpha), width=3)
     
-    # Expanding click ripple
-    if 0.0 < click_progress < 1.0:
-        rad = int(8 + click_progress * 35)
-        alpha = int((1.0 - click_progress) * 200)
-        draw.ellipse([x - rad, y - rad, x + rad, y + rad], outline=(0, 112, 186, alpha), width=3)
+    poly = [(x, y), (x + 14, y + 14), (x + 6, y + 15), (x + 9, y + 23), (x + 4, y + 25), (x + 1, y + 17), (x - 4, y + 21)]
+    draw.polygon(poly, fill=(255, 255, 255, 255), outline=(15, 23, 42, 255))
 
 def draw_sentinel_avatar(draw, ax, ay, t):
-    bob = int(math.sin(t * 5.0) * 4)
-    cy = ay + bob
+    # Head Base
+    draw.rounded_rectangle([ax, ay, ax + 52, ay + 42], radius=12, fill=(15, 23, 42, 255), outline=(0, 112, 186, 255), width=2)
     
-    # Halo pulse
-    pulse = int(math.sin(t * 8.0) * 4)
-    draw.ellipse([ax - 4 - pulse, cy - 4 - pulse, ax + 56 + pulse, cy + 56 + pulse],
-                 outline=(0, 112, 186, int(50 + math.sin(t * 6.0) * 30)), width=2)
+    # Antennas
+    draw.line([(ax + 16, ay), (ax + 10, ay - 6)], fill=(0, 207, 232, 255), width=2)
+    draw.ellipse([ax + 8, ay - 9, ax + 12, ay - 5], fill=(0, 207, 232, 255))
+    draw.line([(ax + 36, ay), (ax + 42, ay - 6)], fill=(0, 207, 232, 255), width=2)
+    draw.ellipse([ax + 40, ay - 9, ax + 44, ay - 5], fill=(0, 207, 232, 255))
     
-    # Antenna
-    draw.line([(ax + 26, cy + 4), (ax + 26, cy - 8)], fill=(148, 163, 184, 255), width=2)
-    orb_pulse = int(3 + math.sin(t * 10.0) * 2)
-    draw.ellipse([ax + 26 - orb_pulse, cy - 10 - orb_pulse, ax + 26 + orb_pulse, cy - 10 + orb_pulse], fill=(6, 182, 212, 255))
+    # Glowing Cyan Visor
+    draw.rounded_rectangle([ax + 8, ay + 12, ax + 44, ay + 28], radius=6, fill=(0, 30, 60, 255), outline=(0, 207, 232, 200), width=1)
     
-    # Head
-    draw.rounded_rectangle([ax, cy, ax + 52, cy + 48], radius=14, fill=(255, 255, 255, 255), outline=(0, 112, 186, 255), width=2)
-    # Visor
-    draw.rounded_rectangle([ax + 6, cy + 12, ax + 46, cy + 36], radius=8, fill=(15, 23, 42, 255))
-    
-    # Cyber eyes
-    is_blink = (t % 3.8) > 3.6
-    eye_h = 2 if is_blink else 6
-    draw.ellipse([ax + 14, cy + 24 - eye_h//2, ax + 22, cy + 24 + eye_h//2], fill=(6, 182, 212, 255))
-    draw.ellipse([ax + 30, cy + 24 - eye_h//2, ax + 38, cy + 24 + eye_h//2], fill=(6, 182, 212, 255))
+    # Animated Eyes
+    blink = math.sin(t * 3.5) > 0.94
+    if blink:
+        draw.line([(ax + 14, ay + 20), (ax + 22, ay + 20)], fill=(0, 207, 232, 255), width=2)
+        draw.line([(ax + 30, ay + 20), (ax + 38, ay + 20)], fill=(0, 207, 232, 255), width=2)
+    else:
+        draw.ellipse([ax + 14, ay + 17, ax + 22, ay + 23], fill=(0, 207, 232, 255))
+        draw.ellipse([ax + 30, ay + 17, ax + 38, ay + 23], fill=(0, 207, 232, 255))
+        draw.ellipse([ax + 17, ay + 18, ax + 19, ay + 20], fill=(255, 255, 255, 255))
+        draw.ellipse([ax + 33, ay + 18, ax + 35, ay + 20], fill=(255, 255, 255, 255))
 
 def main():
-    print("=== Commencing Master Cinema 3D Demo Video Builder ===")
+    print("=== Commencing Master Cinema Demo Video Builder ===")
     
     # Load audio durations
     total_duration = 0.0
@@ -363,10 +365,10 @@ def main():
     print("Pre-rendering browser windows and holographic cards...")
     pre_assets = {}
     for s in SCENES:
-        bgra, tw, th = pre_render_ui_card(s)
+        base_win, tw, th = pre_render_ui_card(s)
         card_img, fw, fh = pre_render_callout_card(s['callout'])
         pre_assets[s['id']] = {
-            'bgra': bgra, 'tw': tw, 'th': th,
+            'win': base_win, 'tw': tw, 'th': th,
             'card': card_img, 'fw': fw, 'fh': fh
         }
         
@@ -399,67 +401,52 @@ def main():
     for sidx, s in enumerate(SCENES):
         print(f"\nRendering Scene {s['ch']} / 07: {s['tag']} ({s['frames']} frames)...")
         asset = pre_assets[s['id']]
-        bgra = asset['bgra']
+        win_img = asset['win']
         tw, th = asset['tw'], asset['th']
-        src_pts = np.float32([[0, 0], [tw, 0], [tw, th], [0, th]])
         
-        # Center positions for UI card: sits nicely on left-center, callout on right
-        target_cx = 740
-        target_cy = 440
-        
-        last_warp_frame = -99
-        last_warped_pil = None
+        # Sits majestically on the left (x=30..1470), callout card on the right (x=1490..1880)
+        base_x = 30
+        base_y = 50
         
         for f in range(s['frames']):
             t = f / float(FPS)
             progress = f / float(s['frames'])
             
-            # Smooth 3D camera dolly-in & yaw drift
-            # Camera gently pushes from 0.98 to 1.04
-            zoom = 0.98 + 0.06 * progress
-            yaw = -0.012 + 0.008 * progress
-            pitch = 0.015 - 0.006 * progress
+            # Smooth cinematic Ken Burns camera push-in: 1.00 -> 1.025
+            zoom = 1.00 + 0.025 * progress
             
-            hw = (tw * zoom) / 2.0
-            hh = (th * zoom) / 2.0
-            
-            if f - last_warp_frame >= 2 or last_warped_pil is None:
-                dst_pts = np.float32([
-                    [target_cx - hw * (1.0 - yaw), target_cy - hh * (1.0 + pitch)],
-                    [target_cx + hw * (1.0 + yaw), target_cy - hh * (1.0 - pitch)],
-                    [target_cx + hw * (1.0 + yaw * 1.06), target_cy + hh * (1.0 + pitch)],
-                    [target_cx - hw * (1.0 - yaw * 1.06), target_cy + hh * (1.0 - pitch)],
-                ])
-                M = cv2.getPerspectiveTransform(src_pts, dst_pts)
-                warped = cv2.warpPerspective(bgra, M, (WIDTH, HEIGHT), flags=cv2.INTER_LINEAR)
-                warped_rgba = cv2.cvtColor(warped, cv2.COLOR_BGRA2RGBA)
-                last_warped_pil = Image.fromarray(warped_rgba)
-                last_warp_frame = f
-                
             frame_pil = base_grid_pil.copy()
             draw = ImageDraw.Draw(frame_pil)
             
-            # 1. Paste 3D perspective UI card (fills screen from y=30 to y=850, NO blank space on top!)
-            frame_pil.paste(last_warped_pil, (0, 0), last_warped_pil)
+            # 1. Paste crisp, razor-sharp UI browser window (NO PERSPECTIVE SKEW)
+            if zoom != 1.00:
+                zw = int(tw * zoom)
+                zh = int(th * zoom)
+                zoomed_win = win_img.resize((zw, zh), Image.Resampling.BILINEAR)
+                # Keep anchored at upper-left with subtle drift
+                dx = int((zw - tw) * 0.3)
+                dy = int((zh - th) * 0.3)
+                frame_pil.paste(zoomed_win, (base_x - dx, base_y - dy), zoomed_win)
+            else:
+                frame_pil.paste(win_img, (base_x, base_y), win_img)
             
-            # 2. Holographic Callout Card on Right
-            fx, fy = 1450, 140
-            float_y = int(math.sin(t * 3.0) * 5)
+            # 2. Holographic Callout Card on Right (Floating smoothly)
+            fx = 1490
+            fy = 90
+            float_y = int(math.sin(t * 2.5) * 4)
             frame_pil.paste(asset['card'], (fx, fy + float_y), asset['card'])
             
-            # Glowing guide line
-            guide_x = int(target_cx + hw * 0.95)
-            guide_y = fy + 40 + float_y
+            # Subtle accent guide dot and connector
+            guide_y = fy + 38 + float_y
             col = s['callout']['color']
-            draw.line([(guide_x, guide_y), (fx - 4, guide_y)], fill=col[:3] + (180,), width=2)
-            draw.ellipse([guide_x - 4, guide_y - 4, guide_x + 4, guide_y + 4], fill=col)
+            draw.line([(base_x + tw - 24, guide_y), (fx - 4, guide_y)], fill=col[:3] + (160,), width=2)
+            draw.ellipse([base_x + tw - 28, guide_y - 4, base_x + tw - 20, guide_y + 4], fill=col)
             
-            # 4. Animated macOS Cursor with Spline Motion
+            # 3. Animated macOS Cursor with Spline Motion
             cpath = s['cursor_path']
             num_segs = len(cpath) - 1
             cur_seg = min(num_segs - 1, int(progress * num_segs))
             seg_t = (progress * num_segs) - cur_seg
-            # Cubic ease-in-out
             seg_ease = 3 * seg_t**2 - 2 * seg_t**3
             p1 = cpath[cur_seg]
             p2 = cpath[cur_seg + 1]
@@ -474,14 +461,14 @@ def main():
                     break
             draw_cursor(draw, cur_x, cur_y, click_prog)
             
-            # 5. Bottom Cinema Subtitle Card
+            # 4. Bottom Cinema Subtitle Card
             sub_w = 1600
             sub_h = 80
             sub_x = (WIDTH - sub_w) // 2
             sub_y = HEIGHT - 105
             
             # Subtitle Shadow & Glass Container
-            draw.rounded_rectangle([sub_x + 3, sub_y + 8, sub_x + sub_w + 3, sub_y + sub_h + 8], radius=16, fill=(15, 23, 42, 40))
+            draw.rounded_rectangle([sub_x + 3, sub_y + 8, sub_x + sub_w + 3, sub_y + sub_h + 8], radius=16, fill=(15, 23, 42, 35))
             draw.rounded_rectangle([sub_x, sub_y, sub_x + sub_w, sub_y + sub_h], radius=16, fill=(255, 255, 255, 252), outline=(203, 213, 225, 255), width=1)
             
             # Animated Sentinel Cyber Avatar
@@ -510,51 +497,57 @@ def main():
             proc.stdin.write(rgb_arr.tobytes())
             global_frame += 1
             
-        elapsed = time.time() - t0
-        fps_curr = global_frame / max(0.1, elapsed)
-        print(f"Finished Scene {s['ch']} - Total Frames: {global_frame}/{int(total_duration*FPS)} ({fps_curr:.1f} fps)")
-
+        print(f"Scene {s['ch']} completed in {time.time() - t0:.1f}s.")
+        
     proc.stdin.close()
     proc.wait()
-    print("\nVisual video stream rendering complete!")
+    print("\nVideo stream encoding finished!")
     
-    # Mux Audio
-    print("Muxing all 7 voice narrations + ambient tech track...")
-    concat_list = os.path.join(OUTPUT_DIR, "audio_concat.txt")
-    with open(concat_list, "w") as f:
+    # 5. Composite Final Audio (Voice + Ambient Synth Soundtrack)
+    print("Compositing voice tracks and ambient synth soundtrack...")
+    voice_concat_list = os.path.join(OUTPUT_DIR, "voice_concat.txt")
+    with open(voice_concat_list, "w") as f:
         for s in SCENES:
             f.write(f"file '{s['voice']}'\n")
             
     combined_voice = os.path.join(OUTPUT_DIR, "voice_combined.mp3")
-    subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", concat_list, "-c", "copy", combined_voice], check=True)
+    subprocess.run([
+        "ffmpeg", "-y", "-f", "concat", "-safe", "0",
+        "-i", voice_concat_list, "-c", "copy", combined_voice
+    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
+    # Ambient Silicon Valley Synth
     ambient_wav = os.path.join(OUTPUT_DIR, "ambient.wav")
     sr = 44100
-    total_samples = int(total_duration * sr) + sr * 2
-    t_arr = np.linspace(0, total_duration + 2.0, total_samples, endpoint=False)
-    # High-tech ambient synth chord: Cmaj9 (C, G, D, B)
-    synth = (
-        np.sin(2 * np.pi * 130.81 * t_arr) * 0.035 +
-        np.sin(2 * np.pi * 196.00 * t_arr) * 0.025 +
-        np.sin(2 * np.pi * 293.66 * t_arr) * 0.020 +
-        np.sin(2 * np.pi * 493.88 * t_arr) * 0.015
-    )
-    synth_int16 = (synth * 32767).astype(np.int16)
+    ambient_samples = int(total_duration * sr) + 88200
+    t_arr = np.linspace(0, total_duration + 2.0, ambient_samples)
+    
+    synth = 0.03 * np.sin(2 * np.pi * 110 * t_arr)
+    synth += 0.02 * np.sin(2 * np.pi * 220 * t_arr)
+    synth += 0.015 * np.sin(2 * np.pi * 330 * t_arr)
+    synth += 0.01 * np.sin(2 * np.pi * 55 * t_arr)
+    
+    chord_mod = np.sin(2 * np.pi * 0.2 * t_arr)
+    synth = synth * (0.8 + 0.2 * chord_mod)
+    synth_16 = (synth * 32767).astype(np.int16)
+    
     import wave
-    with wave.open(ambient_wav, "wb") as wf:
+    with wave.open(ambient_wav, 'wb') as wf:
         wf.setnchannels(1)
         wf.setsampwidth(2)
         wf.setframerate(sr)
-        wf.writeframes(synth_int16.tobytes())
+        wf.writeframes(synth_16.tobytes())
         
+    # Final Mux to FINAL_OUTPUT
     cmd_mux = [
         "ffmpeg", "-y",
         "-i", raw_video_path,
         "-i", combined_voice,
         "-i", ambient_wav,
-        "-filter_complex", "[1:a]volume=1.0[v]; [2:a]volume=0.22[bg]; [v][bg]amix=inputs=2:duration=first[aout]",
+        "-filter_complex",
+        "[1:a]volume=1.0[v];[2:a]volume=0.25[bg];[v][bg]amix=inputs=2:duration=first[a]",
         "-map", "0:v",
-        "-map", "[aout]",
+        "-map", "[a]",
         "-c:v", "copy",
         "-c:a", "aac",
         "-b:a", "192k",
@@ -563,14 +556,14 @@ def main():
     ]
     subprocess.run(cmd_mux, check=True)
     
-    # Copy to public folder
-    subprocess.run(["cp", FINAL_OUTPUT, PUBLIC_OUTPUT], check=True)
+    # Copy to public folder for direct browser playback
+    subprocess.run(["cp", "-f", FINAL_OUTPUT, PUBLIC_OUTPUT], check=True)
     
-    file_size_mb = os.path.getsize(FINAL_OUTPUT) / (1024 * 1024)
-    print(f"\n=======================================================")
-    print(f"Master Cinema 3D Demo Video ready: {FINAL_OUTPUT} ({file_size_mb:.2f} MB)")
+    sz = os.path.getsize(FINAL_OUTPUT) / (1024 * 1024)
+    print("\n=======================================================")
+    print(f"Master Cinema Demo Video ready: {FINAL_OUTPUT} ({sz:.2f} MB)")
     print(f"Public browser stream ready at: http://localhost:3001/payagent_demo.mp4")
-    print(f"=======================================================")
+    print("=======================================================\n")
 
 if __name__ == "__main__":
     main()

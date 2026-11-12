@@ -5,10 +5,12 @@ import { Play, Pause, X, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, Cpu } 
 import confetti from 'canvas-confetti';
 import { playSound } from '@/lib/sounds';
 
+import { NavTab } from './Navbar';
+
 interface InteractiveTourProps {
   isActive: boolean;
   onClose: () => void;
-  onNavigateTab: (tab: 'canvas' | 'merchant' | 'api') => void;
+  onNavigateTab: (tab: NavTab) => void;
   onSetBudget: (val: number) => void;
   onSearch: (query: string) => void;
   onTriggerCheckout: () => void;
