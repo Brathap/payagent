@@ -3,79 +3,54 @@
 import React from 'react';
 
 interface LogoProps {
-  size?: 'sm' | 'md' | 'lg';
   className?: string;
+  size?: number;
 }
 
-export default function Logo({ size = 'md', className = '' }: LogoProps) {
-  const dimensions = size === 'sm' ? 'w-8 h-8' : size === 'lg' ? 'w-12 h-12' : 'w-10 h-10';
-
+export default function Logo({ className = '', size = 36 }: LogoProps) {
   return (
-    <div className={`relative flex items-center justify-center shrink-0 ${dimensions} ${className}`}>
+    <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
       <svg
-        viewBox="0 0 100 100"
+        width={size}
+        height={size}
+        viewBox="0 0 48 48"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full drop-shadow-md"
+        className="transition-transform duration-300 hover:scale-105"
       >
         <defs>
-          {/* Official PayPal gradient colors */}
-          <linearGradient id="paypalBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#003087" />
-            <stop offset="50%" stopColor="#0070BA" />
-            <stop offset="100%" stopColor="#00CFE8" />
+          <linearGradient id="ppPrimary" x1="4" y1="4" x2="38" y2="44" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#003087" />
+            <stop offset="1" stopColor="#0079C1" />
           </linearGradient>
-
-          <linearGradient id="paypalAccentGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#0070BA" />
-            <stop offset="100%" stopColor="#008CFF" />
+          <linearGradient id="ppAccent" x1="16" y1="12" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#0079C1" />
+            <stop offset="1" stopColor="#00CFE8" />
           </linearGradient>
-
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          <filter id="shadow" x="0" y="2" width="48" height="46" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#003087" floodOpacity="0.25" />
           </filter>
         </defs>
 
-        {/* Outer squircle container */}
-        <rect
-          x="4"
-          y="4"
-          width="92"
-          height="92"
-          rx="26"
-          fill="url(#paypalBlueGrad)"
-          className="transition-all duration-300"
-        />
+        {/* Outer Rounded Squircle Base */}
+        <rect width="48" height="48" rx="14" fill="url(#ppPrimary)" filter="url(#shadow)" />
 
-        {/* Sleek geometric inner highlights */}
-        <rect
-          x="5"
-          y="5"
-          width="90"
-          height="90"
-          rx="25"
-          stroke="rgba(255, 255, 255, 0.25)"
-          strokeWidth="2"
-          fill="none"
-        />
-
-        {/* Back 'P' glyph */}
+        {/* Back 'P' Monogram */}
         <path
-          d="M32 74V26H53C62 26 69 32 69 41C69 50 62 55 53 55H42V74H32Z"
-          fill="rgba(0, 48, 135, 0.45)"
+          d="M17 12H27.5C31.6421 12 35 15.3579 35 19.5C35 23.6421 31.6421 27 27.5 27H22.5L20 37H15L17 12Z"
+          fill="white"
+          fillOpacity="0.28"
         />
 
-        {/* Front Interlocking 'P' glyph (Clean, modern icon geometry) */}
+        {/* Front Vibrant 'P' Monogram with Fintech Forward Slash */}
         <path
-          d="M40 80V32H61C70 32 77 38 77 47C77 56 70 61 61 61H50V80H40Z"
-          fill="#FFFFFF"
-          filter="url(#glow)"
+          d="M21 16H31C34.866 16 38 19.134 38 23C38 26.866 34.866 30 31 30H26L23.8 38H19L21 16Z"
+          fill="white"
         />
 
-        {/* Cyan AI Core Star Accent in upper corner */}
-        <circle cx="73" cy="27" r="6" fill="#00CFE8" />
-        <circle cx="73" cy="27" r="3" fill="#FFFFFF" />
+        {/* Dynamic Energy Node / AI Spark */}
+        <circle cx="33" cy="15" r="2.5" fill="#00CFE8" />
+        <circle cx="33" cy="15" r="4.5" stroke="#00CFE8" strokeWidth="0.8" strokeOpacity="0.5" />
       </svg>
     </div>
   );

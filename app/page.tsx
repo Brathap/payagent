@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import NovaCanvas from '@/components/NovaCanvas';
 import MerchantDashboard from '@/components/MerchantDashboard';
@@ -10,15 +10,37 @@ import ProtocolModal from '@/components/ProtocolModal';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'canvas' | 'merchant' | 'api'>('canvas');
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [configOpen, setConfigOpen] = useState(false);
   const [protocolOpen, setProtocolOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('payagent_theme') as 'light' | 'dark' | null;
+      if (saved === 'dark' || saved === 'light') {
+        setTheme(saved);
+      }
+    } catch (e) {}
+  }, []);
+
+  const handleSetTheme = (newTheme: 'light' | 'dark') => {
+    setTheme(newTheme);
+    try {
+      localStorage.setItem('payagent_theme', newTheme);
+    } catch (e) {}
+  };
+
+  const isLight = theme === 'light';
 
   return (
-    <div className={`${theme} min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white transition-colors duration-200 ${
-      theme === 'dark' ? 'bg-[#060911] text-slate-100' : 'bg-slate-50 text-slate-900'
-    } nova-mesh`}>
+    <div
+      className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
+        isLight
+          ? 'light bg-[#f8fafc] text-slate-900 nova-mesh-light selection:bg-blue-600 selection:text-white'
+          : 'dark bg-[#060911] text-slate-100 nova-mesh-dark selection:bg-blue-600 selection:text-white'
+      }`}
+    >
       {/* Navigation Header */}
       <Navbar
         activeTab={activeTab}
@@ -28,7 +50,7 @@ export default function Home() {
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
         theme={theme}
-        setTheme={setTheme}
+        setTheme={handleSetTheme}
       />
 
       {/* Main View Area */}
@@ -42,7 +64,7 @@ export default function Home() {
         ) : activeTab === 'merchant' ? (
           <MerchantDashboard soundEnabled={soundEnabled} theme={theme} />
         ) : (
-          <ApiPlayground soundEnabled={soundEnabled} />
+          <ApiPlayground soundEnabled={soundEnabled} theme={theme} />
         )}
       </main>
 
