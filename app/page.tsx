@@ -17,9 +17,25 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('payagent_theme') as 'light' | 'dark' | null;
-      if (saved === 'dark' || saved === 'light') {
-        setTheme(saved);
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam === 'canvas' || tabParam === 'merchant' || tabParam === 'api') {
+        setActiveTab(tabParam);
+      }
+      const themeParam = params.get('theme');
+      if (themeParam === 'light' || themeParam === 'dark') {
+        setTheme(themeParam);
+      } else {
+        const saved = localStorage.getItem('payagent_theme') as 'light' | 'dark' | null;
+        if (saved === 'dark' || saved === 'light') {
+          setTheme(saved);
+        }
+      }
+      if (params.get('modal') === 'protocol') {
+        setProtocolOpen(true);
+      }
+      if (params.get('modal') === 'config') {
+        setConfigOpen(true);
       }
     } catch (e) {}
   }, []);
