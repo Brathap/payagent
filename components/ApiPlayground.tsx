@@ -134,12 +134,12 @@ export default function ApiPlayground({ soundEnabled }: ApiPlaygroundProps) {
               <span className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
                 <Terminal className="w-4 h-4" />
               </span>
-              <h2 className="text-xl font-black text-white tracking-tight">PayPal Developer Protocol Playground</h2>
-              <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 text-xs font-mono font-bold border border-cyan-500/25">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">PayPal Developer Protocol Playground</h2>
+              <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-blue-600 dark:text-cyan-300 text-xs font-mono font-bold border border-cyan-500/25">
                 Orders v2 REST
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-2 max-w-xl">
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 max-w-xl">
               Inspect raw HTTP request/response telemetry for PayPal OAuth2 token exchanges, Order Staging, and real-time Webhook event dispatches.
             </p>
           </div>

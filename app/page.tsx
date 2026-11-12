@@ -10,12 +10,15 @@ import ProtocolModal from '@/components/ProtocolModal';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'canvas' | 'merchant' | 'api'>('canvas');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [configOpen, setConfigOpen] = useState(false);
   const [protocolOpen, setProtocolOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   return (
-    <div className="min-h-screen bg-[#060911] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white nova-mesh">
+    <div className={`${theme} min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white transition-colors duration-200 ${
+      theme === 'dark' ? 'bg-[#060911] text-slate-100' : 'bg-slate-50 text-slate-900'
+    } nova-mesh`}>
       {/* Navigation Header */}
       <Navbar
         activeTab={activeTab}
@@ -24,6 +27,8 @@ export default function Home() {
         onOpenProtocol={() => setProtocolOpen(true)}
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
+        theme={theme}
+        setTheme={setTheme}
       />
 
       {/* Main View Area */}
@@ -32,9 +37,10 @@ export default function Home() {
           <NovaCanvas
             soundEnabled={soundEnabled}
             onNavigateToMerchant={() => setActiveTab('merchant')}
+            theme={theme}
           />
         ) : activeTab === 'merchant' ? (
-          <MerchantDashboard soundEnabled={soundEnabled} />
+          <MerchantDashboard soundEnabled={soundEnabled} theme={theme} />
         ) : (
           <ApiPlayground soundEnabled={soundEnabled} />
         )}
