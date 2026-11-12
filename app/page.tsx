@@ -137,12 +137,14 @@ export default function Home() {
       <ConfigModal
         isOpen={configOpen}
         onClose={() => setConfigOpen(false)}
+        theme={theme}
       />
 
       {/* Protocol Specs Modal */}
       <ProtocolModal
         isOpen={protocolOpen}
         onClose={() => setProtocolOpen(false)}
+        theme={theme}
       />
     </div>
   );
