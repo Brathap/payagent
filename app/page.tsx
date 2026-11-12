@@ -7,6 +7,8 @@ import MerchantDashboard from '@/components/MerchantDashboard';
 import ApiPlayground from '@/components/ApiPlayground';
 import ConfigModal from '@/components/ConfigModal';
 import ProtocolModal from '@/components/ProtocolModal';
+import ParticleBackground from '@/components/ParticleBackground';
+import InteractiveTour from '@/components/InteractiveTour';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'canvas' | 'merchant' | 'api'>('canvas');
@@ -14,6 +16,11 @@ export default function Home() {
   const [protocolOpen, setProtocolOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [tourActive, setTourActive] = useState(false);
+
+  // Cross-component triggers for the tour
+  const [tourBudget, setTourBudget] = useState<number | undefined>(undefined);
+  const [tourQuery, setTourQuery] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     try {
@@ -37,6 +44,9 @@ export default function Home() {
       if (params.get('modal') === 'config') {
         setConfigOpen(true);
       }
+      if (params.get('tour') === 'true') {
+        setTourActive(true);
+      }
     } catch (e) {}
   }, []);
 
@@ -51,12 +61,15 @@ export default function Home() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
+      className={`min-h-screen flex flex-col font-sans transition-colors duration-200 relative overflow-x-hidden ${
         isLight
           ? 'light bg-[#f8fafc] text-slate-900 nova-mesh-light selection:bg-blue-600 selection:text-white'
           : 'dark bg-[#060911] text-slate-100 nova-mesh-dark selection:bg-blue-600 selection:text-white'
       }`}
     >
+      {/* Dynamic Animated Canvas Particle Mesh */}
+      <ParticleBackground theme={theme} />
+
       {/* Navigation Header */}
       <Navbar
         activeTab={activeTab}
@@ -67,10 +80,11 @@ export default function Home() {
         setSoundEnabled={setSoundEnabled}
         theme={theme}
         setTheme={handleSetTheme}
+        onStartTour={() => setTourActive(true)}
       />
 
       {/* Main View Area */}
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         {activeTab === 'canvas' ? (
           <NovaCanvas
             soundEnabled={soundEnabled}
@@ -83,6 +97,17 @@ export default function Home() {
           <ApiPlayground soundEnabled={soundEnabled} theme={theme} />
         )}
       </main>
+
+      {/* Autonomous Guided Interactive Tour */}
+      <InteractiveTour
+        isActive={tourActive}
+        onClose={() => setTourActive(false)}
+        onNavigateTab={(tab) => setActiveTab(tab)}
+        onSetBudget={(val) => setTourBudget(val)}
+        onSearch={(q) => setTourQuery(q)}
+        onTriggerCheckout={() => {}}
+        onTriggerDispute={() => {}}
+      />
 
       {/* Settings / Sandbox Config Modal */}
       <ConfigModal

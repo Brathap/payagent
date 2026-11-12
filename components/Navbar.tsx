@@ -14,6 +14,7 @@ interface NavbarProps {
   setSoundEnabled: (val: boolean) => void;
   theme: 'light' | 'dark';
   setTheme: (t: 'light' | 'dark') => void;
+  onStartTour?: () => void;
 }
 
 export default function Navbar({
@@ -25,6 +26,7 @@ export default function Navbar({
   setSoundEnabled,
   theme,
   setTheme,
+  onStartTour,
 }: NavbarProps) {
   const switchTab = (tab: 'canvas' | 'merchant' | 'api') => {
     if (soundEnabled) playSound('click');
@@ -128,6 +130,21 @@ export default function Navbar({
         {/* Utility controls */}
         <div className="flex items-center space-x-2 shrink-0">
           
+          {/* Live Interactive Guided Tour */}
+          {onStartTour && (
+            <button
+              onClick={() => {
+                if (soundEnabled) playSound('success');
+                onStartTour();
+              }}
+              title="Launch Autonomous Interactive Tour"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs shadow-lg shadow-blue-500/25 transition cursor-pointer active:scale-95 animate-pulse"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-cyan-200" />
+              <span className="hidden sm:inline">Live Tour</span>
+            </button>
+          )}
+
           {/* Light / Dark Mode Toggle */}
           <button
             onClick={toggleTheme}
