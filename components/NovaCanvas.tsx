@@ -724,10 +724,10 @@ export default function NovaCanvas({
         {/* Command Search Bar */}
         <form
           onSubmit={handleSearchSubmit}
-          className={`relative max-w-2xl mx-auto flex items-center rounded-2xl p-2 shadow-2xl transition cyber-glow border ${
+          className={`relative max-w-2xl mx-auto flex items-center rounded-2xl p-2 transition-all duration-200 border ${
             isLight
-              ? 'bg-white border-slate-300/90 shadow-blue-500/10 focus-within:border-blue-600'
-              : 'bg-slate-900/90 border-white/10 shadow-black/50 focus-within:border-cyan-400'
+              ? 'bg-white border-slate-300 shadow-lg shadow-slate-200/50 focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-500/20'
+              : 'bg-slate-900 border-slate-800 shadow-xl shadow-black/40 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-500/20'
           }`}
         >
           <input
@@ -1864,7 +1864,7 @@ export default function NovaCanvas({
       {/* =========================================================================
           MODULE C: ENTERPRISE ROI & AUTONOMOUS SAVINGS CALCULATOR
          ========================================================================= */}
-      {(canvasView === 'all' || canvasView === 'roi') && (
+      {(canvasView === 'all' || canvasView === 'roi' || canvasView === 'bidding') && (
       <div className={`p-8 rounded-3xl border shadow-xl transition-all duration-300 space-y-6 ${
         isLight
           ? 'bg-gradient-to-b from-white via-slate-50/60 to-white border-slate-200 shadow-slate-200/60 text-slate-900'

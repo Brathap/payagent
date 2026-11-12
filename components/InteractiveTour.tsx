@@ -94,7 +94,8 @@ export default function InteractiveTour({
       title: 'Step 5: Autonomous AI PayPal Dispute Defense',
       desc: 'AI Auditor verifies transaction safety & generates legally structured Dispute Dossier.',
       action: () => {
-        setCursorPos({ x: 380, y: 650 });
+        onNavigateTab('dispute');
+        setCursorPos({ x: 380, y: 350 });
         setTimeout(() => {
           setCursorClicking(true);
           onTriggerDispute();

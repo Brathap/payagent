@@ -27,7 +27,7 @@ export default function ParticleBackground({ theme }: ParticleBackgroundProps) {
     window.addEventListener('resize', handleResize);
 
     const isLight = theme === 'light';
-    const particleCount = Math.min(width > 1200 ? 55 : 35, 60);
+    const particleCount = Math.min(width > 1200 ? 40 : 25, 45);
 
     const particles: {
       x: number;
@@ -35,19 +35,15 @@ export default function ParticleBackground({ theme }: ParticleBackgroundProps) {
       vx: number;
       vy: number;
       radius: number;
-      label?: string;
     }[] = [];
-
-    const labels = ['APCP v1.0', 'Orders v2', 'Ed25519', '10% Rebate', 'Zero-Dispute', 'AG Grid v36'];
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.45,
-        vy: (Math.random() - 0.5) * 0.45,
-        radius: Math.random() * 2 + 1.2,
-        label: i < labels.length ? labels[i] : undefined,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        radius: Math.random() * 1.5 + 1.0,
       });
     }
 
@@ -67,7 +63,7 @@ export default function ParticleBackground({ theme }: ParticleBackgroundProps) {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = isLight ? 'rgba(0, 112, 186, 0.4)' : 'rgba(0, 207, 232, 0.45)';
+        ctx.fillStyle = isLight ? 'rgba(0, 112, 186, 0.25)' : 'rgba(0, 207, 232, 0.3)';
         ctx.fill();
 
         // Connect near neighbors
@@ -77,24 +73,17 @@ export default function ParticleBackground({ theme }: ParticleBackgroundProps) {
           const dy = p.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 130) {
+          if (dist < 120) {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            const alpha = (1 - dist / 130) * (isLight ? 0.08 : 0.15);
+            const alpha = (1 - dist / 120) * (isLight ? 0.05 : 0.08);
             ctx.strokeStyle = isLight
               ? `rgba(0, 112, 186, ${alpha})`
               : `rgba(0, 207, 232, ${alpha})`;
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 0.75;
             ctx.stroke();
           }
-        }
-
-        // Draw occasional floating badge text
-        if (p.label) {
-          ctx.font = '10px monospace';
-          ctx.fillStyle = isLight ? 'rgba(71, 85, 105, 0.35)' : 'rgba(148, 163, 184, 0.35)';
-          ctx.fillText(p.label, p.x + 8, p.y + 3);
         }
       }
 

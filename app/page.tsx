@@ -18,7 +18,7 @@ export default function Home() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [tourActive, setTourActive] = useState(false);
-  const [canvasView, setCanvasView] = useState<'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads'>('all');
+  const [canvasView, setCanvasView] = useState<'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads'>('procure');
 
   // Cross-component triggers for the tour
   const [tourBudget, setTourBudget] = useState<number | undefined>(undefined);
@@ -115,7 +115,7 @@ export default function Home() {
             theme={theme}
             controlledBudget={tourBudget}
             controlledQuery={tourQuery}
-            canvasView={canvasView === 'all' ? 'all' : 'procure'}
+            canvasView="procure"
             setCanvasView={setCanvasView}
             onRegisterTriggerCheckout={(fn) => {
               checkoutTriggerRef.current = fn;
