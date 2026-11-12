@@ -208,9 +208,10 @@ export default function NovaCanvas({
       });
       const data = await res.json();
       if (data.actionSteps) setAgentSteps(data.actionSteps);
-      if (data.replyText) {
-        setAgentReply(data.replyText);
-        if (soundEnabled) speakVoice(data.replyText);
+      const replyMsg = data.replyText || data.reply;
+      if (replyMsg) {
+        setAgentReply(replyMsg);
+        if (soundEnabled) speakVoice(replyMsg);
       }
       if (data.suggestedProducts && data.suggestedProducts.length > 0) {
         setSelectedProduct(data.suggestedProducts[0]);
@@ -244,10 +245,11 @@ export default function NovaCanvas({
       });
       const data = await res.json();
       if (data.actionSteps) setAgentSteps(data.actionSteps);
-      if (data.replyText) {
-        setAgentReply(data.replyText);
+      const replyMsg = data.replyText || data.reply;
+      if (replyMsg) {
+        setAgentReply(replyMsg);
         if (soundEnabled) {
-          speakVoice(data.replyText, () => setIsVoiceActive(false));
+          speakVoice(replyMsg, () => setIsVoiceActive(false));
         }
       }
       if (data.suggestedProducts && data.suggestedProducts.length > 0) {
@@ -353,9 +355,10 @@ export default function NovaCanvas({
       });
       const data = await res.json();
       if (data.actionSteps) setAgentSteps(data.actionSteps);
-      if (data.replyText) {
-        setAgentReply(data.replyText);
-        if (soundEnabled) speakVoice(data.replyText);
+      const replyMsg = data.replyText || data.reply;
+      if (replyMsg) {
+        setAgentReply(replyMsg);
+        if (soundEnabled) speakVoice(replyMsg);
       }
       if (data.suggestedProducts && data.suggestedProducts.length > 0) {
         setSelectedProduct(data.suggestedProducts[0]);

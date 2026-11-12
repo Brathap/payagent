@@ -143,6 +143,7 @@ Select any product to start 1-click PayPal checkout, or ask me to compare specs!
 
     return NextResponse.json({
       reply: replyText,
+      replyText: replyText,
       actionSteps,
       suggestedProducts,
       negotiation,
