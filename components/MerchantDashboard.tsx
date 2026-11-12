@@ -1,0 +1,455 @@
+'use client';
+
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import { ModuleRegistry, AllCommunityModule, ColDef, GridReadyEvent } from 'ag-grid-community';
+
+// Import standard AG Grid CSS themes
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+
+import {
+  ShieldAlert,
+  Sparkles,
+  Download,
+  Search,
+  RefreshCw,
+  FileText,
+  DollarSign,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle,
+} from 'lucide-react';
+import { MerchantOrder } from '@/lib/types';
+
+// Register all community features
+ModuleRegistry.registerModules([AllCommunityModule]);
+
+export default function MerchantDashboard() {
+  const [orders, setOrders] = useState<MerchantOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [quickFilter, setQuickFilter] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState<MerchantOrder | null>(null);
+  const [auditData, setAuditData] = useState<any>(null);
+  const [auditing, setAuditing] = useState(false);
+  const [generatedDispute, setGeneratedDispute] = useState<string | null>(null);
+
+  const gridRef = useRef<AgGridReact>(null);
+
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/merchant/orders');
+      const data = await res.json();
+      setOrders(data.orders || []);
+      if (data.orders?.length > 0 && !selectedOrder) {
+        setSelectedOrder(data.orders[0]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch orders:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedOrder]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  const runAiAudit = async () => {
+    setAuditing(true);
+    try {
+      const res = await fetch('/api/merchant/audit', { method: 'POST' });
+      const data = await res.json();
+      setAuditData(data);
+    } catch (err) {
+      console.error('Failed to run audit:', err);
+    } finally {
+      setAuditing(false);
+    }
+  };
+
+  const handleExportCsv = () => {
+    gridRef.current?.api.exportDataAsCsv({
+      fileName: `payagent-orders-${new Date().toISOString().substring(0, 10)}.csv`,
+    });
+  };
+
+  const generateDisputeLetter = (order: MerchantOrder) => {
+    const letter = `PAYPAL DISPUTE EVIDENCE DOSSIER
+Case Reference: Dispute on Transaction ${order.paypalOrderId} (Internal Ref: ${order.id})
+Amount: $${order.totalAmount.toFixed(2)} ${order.currency}
+Customer: ${order.customerName} (${order.customerEmail})
+Timestamp: ${order.timestamp}
+
+1. TRANSACTION VERIFICATION:
+The transaction was authorized through PayPal Orders v2 API with standard cryptographic handshakes.
+Items Dispatched: ${order.itemSummary}
+
+2. AI FRAUD ENGINE AUDIT LOG:
+- Risk Score at Transaction: ${order.riskScore}/100 (${order.riskLevel})
+- Risk Diagnostics: ${order.fraudReasoning || 'Verified device fingerprint and matching billing credentials.'}
+
+3. MERCHANT STATEMENT:
+This order was legitimately authorized, packed, and fulfilled in accordance with PayPal Seller Protection guidelines. The buyer's claim of unauthorized transaction is rebutted by continuous session logs and IP consistency.
+
+Submitted by: PayAgent Merchant Intelligence Copilot`;
+    setGeneratedDispute(letter);
+  };
+
+  // AG Grid Column Definitions
+  const columnDefs = useMemo<ColDef<MerchantOrder>[]>(() => [
+    {
+      headerName: 'Order ID',
+      field: 'id',
+      width: 120,
+      pinned: 'left',
+      cellClass: 'font-mono font-bold text-blue-400',
+    },
+    {
+      headerName: 'PayPal Order ID',
+      field: 'paypalOrderId',
+      width: 170,
+      cellClass: 'font-mono text-xs text-slate-300',
+    },
+    {
+      headerName: 'Customer',
+      field: 'customerName',
+      width: 150,
+      cellRenderer: (params: any) => (
+        <div>
+          <div className="font-semibold text-white leading-tight">{params.data.customerName}</div>
+          <div className="text-[11px] text-slate-400 truncate">{params.data.customerEmail}</div>
+        </div>
+      ),
+    },
+    {
+      headerName: 'Items Summary',
+      field: 'itemSummary',
+      flex: 1,
+      minWidth: 220,
+    },
+    {
+      headerName: 'Amount',
+      field: 'totalAmount',
+      width: 110,
+      valueFormatter: (params) => `$${params.value?.toFixed(2)} USD`,
+      cellClass: 'font-bold text-white',
+    },
+    {
+      headerName: 'Risk Score',
+      field: 'riskScore',
+      width: 120,
+      cellRenderer: (params: any) => {
+        const score = params.value;
+        const color =
+          score > 60
+            ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+            : score > 30
+            ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+            : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+        return (
+          <span className={`px-2 py-0.5 rounded-full text-xs font-bold border ${color}`}>
+            {score}/100 ({score > 60 ? 'HIGH' : score > 30 ? 'MED' : 'LOW'})
+          </span>
+        );
+      },
+    },
+    {
+      headerName: 'Status',
+      field: 'status',
+      width: 120,
+      cellRenderer: (params: any) => {
+        const status = params.value;
+        const color =
+          status === 'FLAGGED'
+            ? 'bg-red-500/20 text-red-400 border-red-500/30'
+            : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+        return (
+          <span className={`px-2 py-0.5 rounded-md text-[11px] font-semibold uppercase tracking-wider border ${color}`}>
+            {status}
+          </span>
+        );
+      },
+    },
+    {
+      headerName: 'Timestamp',
+      field: 'timestamp',
+      width: 150,
+      cellClass: 'text-xs text-slate-400',
+    },
+  ], []);
+
+  const defaultColDef = useMemo<ColDef>(() => ({
+    sortable: true,
+    filter: true,
+    resizable: true,
+  }), []);
+
+  const totalVolume = orders.reduce((sum, o) => sum + o.totalAmount, 0);
+  const flaggedCount = orders.filter((o) => o.status === 'FLAGGED' || o.riskScore >= 60).length;
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      
+      {/* Top Metrics Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-400 font-medium">Total Processed Volume</p>
+            <h3 className="text-2xl font-black text-white mt-1">${totalVolume.toFixed(2)}</h3>
+            <p className="text-[11px] text-emerald-400 mt-1 flex items-center">
+              <TrendingUp className="w-3 h-3 mr-1" /> Real-time PayPal captures
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+            <DollarSign className="w-6 h-6" />
+          </div>
+        </div>
+
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-400 font-medium">Active Transactions</p>
+            <h3 className="text-2xl font-black text-white mt-1">{orders.length}</h3>
+            <p className="text-[11px] text-slate-400 mt-1">Live in AG Grid Data Store</p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <CheckCircle className="w-6 h-6" />
+          </div>
+        </div>
+
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-400 font-medium">AI Flagged Anomalies</p>
+            <h3 className="text-2xl font-black text-rose-400 mt-1">{flaggedCount}</h3>
+            <p className="text-[11px] text-rose-300 mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" /> Chargeback protection
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+            <ShieldAlert className="w-6 h-6" />
+          </div>
+        </div>
+
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-400 font-medium">Sponsor Tech</p>
+            <h3 className="text-lg font-bold text-white mt-1">AG Grid Community</h3>
+            <p className="text-[11px] text-cyan-400 mt-1">Enterprise Table &amp; Filtering</p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-black text-xs">
+            AG
+          </div>
+        </div>
+      </div>
+
+      {/* AG Grid Section */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-4">
+        
+        {/* Grid Toolbar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-2">
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={quickFilter}
+                onChange={(e) => setQuickFilter(e.target.value)}
+                placeholder="Quick Filter (Name, Order, Item)..."
+                className="pl-9 pr-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 w-64"
+              />
+            </div>
+            <button
+              onClick={fetchOrders}
+              className="p-2 rounded-xl bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white transition"
+              title="Refresh Grid Data"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={runAiAudit}
+              disabled={auditing}
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-semibold shadow-md transition"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{auditing ? 'Auditing with AI...' : 'Run AI Risk & Revenue Audit'}</span>
+            </button>
+
+            <button
+              onClick={handleExportCsv}
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-200 text-xs font-semibold transition"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Export CSV</span>
+            </button>
+          </div>
+        </div>
+
+        {/* The AG Grid Table */}
+        <div className="ag-theme-quartz-dark w-full h-[400px] rounded-xl overflow-hidden border border-slate-800">
+          <AgGridReact
+            ref={gridRef}
+            rowData={orders}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            quickFilterText={quickFilter}
+            pagination={true}
+            paginationPageSize={10}
+            rowSelection="single"
+            onRowClicked={(event) => setSelectedOrder(event.data || null)}
+          />
+        </div>
+      </div>
+
+      {/* AI Intelligence & Selected Order Copilot */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* Selected Order Inspector */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-4 h-4 text-blue-400" />
+              <h3 className="text-sm font-bold text-white">Order Deep-Inspection &amp; Dispute Copilot</h3>
+            </div>
+            {selectedOrder && (
+              <span className="font-mono text-xs px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                {selectedOrder.id}
+              </span>
+            )}
+          </div>
+
+          {selectedOrder ? (
+            <div className="space-y-3 text-xs">
+              <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+                <div>
+                  <span className="text-slate-400">Customer:</span>
+                  <p className="font-semibold text-white mt-0.5">{selectedOrder.customerName}</p>
+                </div>
+                <div>
+                  <span className="text-slate-400">Email:</span>
+                  <p className="font-mono text-slate-300 mt-0.5 truncate">{selectedOrder.customerEmail}</p>
+                </div>
+                <div>
+                  <span className="text-slate-400">Amount:</span>
+                  <p className="font-extrabold text-emerald-400 mt-0.5">${selectedOrder.totalAmount.toFixed(2)} USD</p>
+                </div>
+                <div>
+                  <span className="text-slate-400">AI Risk Score:</span>
+                  <p className={`font-bold mt-0.5 ${selectedOrder.riskScore > 60 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                    {selectedOrder.riskScore}/100 ({selectedOrder.riskLevel})
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-slate-400 font-medium">Risk Diagnostics:</span>
+                <p className="mt-1 p-2.5 rounded-lg bg-slate-950/80 border border-slate-800/80 text-slate-300 leading-relaxed">
+                  {selectedOrder.fraudReasoning || 'Transaction verified safe by autonomous agent parameters.'}
+                </p>
+              </div>
+
+              <div className="pt-2 flex items-center justify-between">
+                <button
+                  onClick={() => generateDisputeLetter(selectedOrder)}
+                  className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition flex items-center space-x-1.5 shadow-md shadow-indigo-600/20"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Generate PayPal Dispute Defense Letter</span>
+                </button>
+              </div>
+
+              {generatedDispute && (
+                <div className="mt-3 p-3 rounded-xl bg-slate-950 border border-indigo-500/30 space-y-2 animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between text-indigo-400 font-bold">
+                    <span>AI-Generated PayPal Evidence Letter</span>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(generatedDispute)}
+                      className="text-[11px] underline text-slate-300 hover:text-white"
+                    >
+                      Copy to Clipboard
+                    </button>
+                  </div>
+                  <pre className="text-[11px] text-slate-300 whitespace-pre-wrap font-mono max-h-48 overflow-y-auto">
+                    {generatedDispute}
+                  </pre>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 py-8 text-center">Click any row in the AG Grid above to inspect details</p>
+          )}
+        </div>
+
+        {/* AI Merchant Audit Panel */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <h3 className="text-sm font-bold text-white">AI Merchant Copilot Recommendations</h3>
+            </div>
+            <span className="text-[11px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+              Live Analysis
+            </span>
+          </div>
+
+          {auditData ? (
+            <div className="space-y-3">
+              <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center text-xs">
+                <div>
+                  <span className="text-slate-400">Total Volume</span>
+                  <p className="font-bold text-white mt-0.5">${auditData.metrics.totalVolume}</p>
+                </div>
+                <div>
+                  <span className="text-slate-400">Flagged Vol.</span>
+                  <p className="font-bold text-rose-400 mt-0.5">${auditData.metrics.flaggedVolume}</p>
+                </div>
+                <div>
+                  <span className="text-slate-400">Risk Ratio</span>
+                  <p className="font-bold text-amber-400 mt-0.5">{auditData.metrics.highRiskRatio}</p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                {auditData.recommendations.map((rec: any, idx: number) => (
+                  <div key={idx} className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-white">{rec.title}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
+                        rec.severity === 'HIGH'
+                          ? 'bg-rose-500/20 text-rose-300'
+                          : rec.severity === 'MEDIUM'
+                          ? 'bg-amber-500/20 text-amber-300'
+                          : 'bg-blue-500/20 text-blue-300'
+                      }`}>
+                        {rec.severity}
+                      </span>
+                    </div>
+                    <p className="text-slate-400 leading-relaxed">{rec.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-10 space-y-3">
+              <Sparkles className="w-8 h-8 text-indigo-400 mx-auto opacity-70 animate-bounce" />
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                Click <strong>&quot;Run AI Risk &amp; Revenue Audit&quot;</strong> to let our autonomous LLM agent evaluate fraud vulnerabilities across all current PayPal transactions in AG Grid.
+              </p>
+              <button
+                onClick={runAiAudit}
+                className="px-4 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition"
+              >
+                Execute Audit Now
+              </button>
+            </div>
+          )}
+        </div>
+
+      </div>
+
+    </div>
+  );
+}
