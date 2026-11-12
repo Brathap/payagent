@@ -32,13 +32,13 @@ export default function Home() {
         setActiveTab(tabParam);
       }
       const themeParam = params.get('theme');
-      if (themeParam === 'light' || themeParam === 'dark') {
-        setTheme(themeParam);
+      if (themeParam === 'light') {
+        setTheme('light');
+      } else if (themeParam === 'dark') {
+        setTheme('dark');
       } else {
-        const saved = localStorage.getItem('payagent_theme') as 'light' | 'dark' | null;
-        if (saved === 'dark' || saved === 'light') {
-          setTheme(saved);
-        }
+        // Enforce pure light theme default for high-contrast fintech aesthetics
+        setTheme('light');
       }
       if (params.get('modal') === 'protocol') {
         setProtocolOpen(true);
