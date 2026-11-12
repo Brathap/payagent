@@ -63,3 +63,28 @@ export function playSound(type: 'click' | 'success' | 'alert' | 'agent') {
     // Graceful fallback if audio is not permitted by browser policy
   }
 }
+
+// Browser-native speech synthesizer for real-time voice feedback
+export function speakVoice(text: string) {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  try {
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/[*_#`]/g, '');
+    const utter = new SpeechSynthesisUtterance(cleanText);
+    utter.rate = 1.05;
+    utter.pitch = 1.0;
+    const voices = window.speechSynthesis.getVoices();
+    const bestVoice = voices.find(
+      (v) =>
+        v.lang.startsWith('en') &&
+        (v.name.includes('Google') ||
+          v.name.includes('Natural') ||
+          v.name.includes('Samantha') ||
+          v.name.includes('English'))
+    );
+    if (bestVoice) utter.voice = bestVoice;
+    window.speechSynthesis.speak(utter);
+  } catch {
+    // Graceful fallback
+  }
+}
