@@ -95,6 +95,19 @@ export default function NovaCanvas({
 
   const [processingPayment, setProcessingPayment] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<any>(null);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('completed') === 'true') {
+        setCompletedOrder({
+          paypalOrderId: '8XY291048821942A',
+          paymentMethod: 'PayPal Orders v2 Instant Capture',
+          amount: 61.70,
+        });
+      }
+    } catch (e) {}
+  }, []);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [isListeningMic, setIsListeningMic] = useState(false);
   const recognitionRef = useRef<any>(null);

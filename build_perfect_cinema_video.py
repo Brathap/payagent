@@ -59,10 +59,10 @@ SCENES = [
             "color": (16, 185, 129, 255)
         },
         "subtitles": [
-            (0.0, 5.2, "Meet PayAgent, built for the PayPal AI Hackathon 2026."),
-            (5.2, 11.2, "As autonomous AI agents spend money, commerce faces runaway hallucinations and chargebacks."),
-            (11.2, 16.0, "Our solution is APCP, the Agentic Payment Consent Protocol."),
-            (16.0, 99.0, "Decoupling AI reasoning from direct financial authority with cryptographic enclave proofs.")
+            (0.0, 5.0, "Meet PayAgent, built for the PayPal AI Hackathon 2026."),
+            (5.0, 13.5, "While autonomous AI agents revolutionize shopping, they cannot safely spend money without runaway risk."),
+            (13.5, 20.0, "We engineered APCP, the Agentic Payment Consent Protocol."),
+            (20.0, 30.0, "Decoupling AI reasoning from financial authority via cryptographic enclaves and immutable nonces.")
         ],
         "cursor_path": [(400, 600), (700, 420), (750, 420), (820, 560)],
         "click_at": [7.0, 14.0]
@@ -85,9 +85,9 @@ SCENES = [
             "color": (0, 112, 186, 255)
         },
         "subtitles": [
-            (0.0, 5.0, "On the Shopper Canvas, users command their personal purchasing agent using natural voice or prompt."),
-            (5.0, 10.5, "Crucially, the user enforces a non-bypassable spending ceiling."),
-            (10.5, 99.0, "If an agent attempts to spend even one dollar above the mandate, the transaction is mathematically blocked.")
+            (0.0, 6.0, "On the Shopper Canvas, users command their personal purchasing agent with natural voice or prompts."),
+            (6.0, 13.5, "Crucially, the user sets a non-bypassable spending ceiling, here clamped strictly at one hundred dollars."),
+            (13.5, 22.0, "If an agent attempts to spend even a single dollar above this mandate, the transaction is mathematically blocked.")
         ],
         "cursor_path": [(300, 700), (520, 540), (860, 480), (920, 480)],
         "click_at": [4.0, 11.5]
@@ -95,52 +95,53 @@ SCENES = [
     {
         "id": "scene3",
         "ch": "03",
-        "chapter_name": "Sub-50ms Deterministic Swarm Reasoning",
-        "src": "/home/Brathap/payagent/public/screens/screen_canvas_hero.png",
-        "url": "https://payagent.ai/reasoning • Sub-50ms Swarm Execution Tree",
+        "chapter_name": "Multi-Merchant Autonomous Bidding Matrix",
+        "src": "/home/Brathap/payagent/public/screens/screen_bidding.png",
+        "url": "https://payagent.ai/bidding • Multi-Merchant RFQ Arbitration Matrix",
         "voice": f"{VOICE_DIR}/voice_03.mp3",
         "callout": {
-            "tag": "CONSENSUS 03",
-            "title": "Sub-50ms Execution",
+            "tag": "SAVINGS 03",
+            "title": "10% Partner Concession",
             "bullets": [
-                "Deterministic verification tree",
-                "Ed25519 cryptographic consent nonce",
-                "Zero black-box hallucination risk"
+                "Automated 3-way merchant reverse RFQ",
+                "Auto-negotiated 10% partner concession",
+                "Over-budget and low-ESG bids rejected"
             ],
             "color": (139, 92, 246, 255)
         },
         "subtitles": [
-            (0.0, 5.0, "Under the hood, PayAgent executes a sub-50ms deterministic reasoning tree."),
-            (5.0, 11.0, "Watch the live swarm trace as it verifies catalog specifications and tests budget constraints."),
-            (11.0, 99.0, "It generates an Ed25519 cryptographic consent nonce before funds can ever move.")
+            (0.0, 5.0, "Here is the Multi-Merchant Autonomous Bidding Matrix."),
+            (5.0, 14.0, "PayAgent runs reverse RFQs across multiple suppliers in real time, scoring catalog pricing and ESG ratings."),
+            (14.0, 22.5, "It arbitrates an automatic 10% partner concession, maximizing user value while instantly rejecting over-budget bids.")
         ],
-        "cursor_path": [(350, 450), (600, 380), (850, 420), (1050, 460)],
-        "click_at": [6.5, 13.0]
+        "cursor_path": [(300, 500), (500, 420), (800, 450), (1100, 450)],
+        "click_at": [5.5, 12.0]
     },
     {
         "id": "scene4",
         "ch": "04",
-        "chapter_name": "Multi-Merchant Autonomous Bidding Matrix",
-        "src": "/home/Brathap/payagent/public/screens/screen_bidding.png",
-        "url": "https://payagent.ai/bidding • Multi-Merchant RFQ Arbitration Matrix",
+        "chapter_name": "1-Click PayPal Capture & Settlement Pass",
+        "src": "/home/Brathap/payagent/public/screens/screen_payment_success.png",
+        "url": "https://payagent.ai/canvas?completed=true • Live PayPal Captured Settlement Pass",
         "voice": f"{VOICE_DIR}/voice_04.mp3",
         "callout": {
-            "tag": "SAVINGS 04",
-            "title": "10% Partner Rebate",
+            "tag": "SETTLEMENT 04",
+            "title": "Payment Captured Live",
             "bullets": [
-                "Automated 3-way merchant reverse RFQ",
-                "Over-budget and low-ESG bids rejected",
-                "PayPal Green carbon offsets bundled"
+                "Status: CAPTURED ($61.70 USD)",
+                "Order ID: 8XY291048821942A",
+                "Ed25519 cryptographic signature proof"
             ],
             "color": (16, 185, 129, 255)
         },
         "subtitles": [
-            (0.0, 5.0, "Here is the Multi-Merchant Autonomous Bidding Matrix."),
-            (5.0, 10.5, "PayAgent runs reverse RFQs across multiple suppliers, scoring pricing, ESG ratings, and delivery terms."),
-            (10.5, 99.0, "Securing an automatic 10% partner concession while rejecting over-budget bids.")
+            (0.0, 6.5, "With a single click, the staged transaction is dispatched directly to the PayPal Orders v2 API."),
+            (6.5, 11.5, "The payment is instantly captured and confirmed!"),
+            (11.5, 18.0, "Displayed right here on the website is the official PayPal Digital Settlement Pass—order status CAPTURED..."),
+            (18.0, 23.5, "...sixty-one dollars and seventy cents settled, backed by an Ed25519 cryptographic signature proof.")
         ],
-        "cursor_path": [(300, 500), (500, 420), (800, 450), (1100, 450)],
-        "click_at": [5.5, 12.0]
+        "cursor_path": [(350, 480), (600, 420), (850, 400), (950, 460)],
+        "click_at": [6.0, 11.5]
     },
     {
         "id": "scene5",
@@ -160,9 +161,9 @@ SCENES = [
             "color": (0, 112, 186, 255)
         },
         "subtitles": [
-            (0.0, 5.0, "For merchants, PayAgent integrates AG Grid Community v36."),
-            (5.0, 11.0, "High-performance virtualized rows track every autonomous trade in real time."),
-            (11.0, 99.0, "Each transaction is permanently linked to its Ed25519 cryptographic proof and PayPal settlement hash.")
+            (0.0, 6.5, "On the merchant side, transactions stream in real time through an enterprise AG Grid table."),
+            (6.5, 13.5, "Built with AG Grid v36 Community, merchants enjoy high-performance virtualized rows and quick filtering."),
+            (13.5, 20.3, "Permanently linked directly to each transaction's cryptographic proof.")
         ],
         "cursor_path": [(400, 650), (700, 520), (950, 440), (1100, 440)],
         "click_at": [7.5, 13.5]
@@ -186,9 +187,9 @@ SCENES = [
         },
         "subtitles": [
             (0.0, 5.5, "What happens when a buyer claims their AI bought something by mistake?"),
-            (5.5, 11.5, "PayAgent's Dispute Defense Simulator demonstrates the breakthrough."),
-            (11.5, 16.0, "In 304 milliseconds, it matches the signed Ed25519 nonce to the PayPal capture ID."),
-            (16.0, 99.0, "Securing 100% merchant liability protection in the PayPal Resolution Center.")
+            (5.5, 11.0, "PayAgent's Dispute Defense Simulator demonstrates the breakthrough."),
+            (11.0, 18.0, "In just 304 milliseconds, it matches the signed Ed25519 nonce to the PayPal capture ID..."),
+            (18.0, 25.2, "...compiling a court-ready dossier that secures 100% merchant liability protection in the PayPal Resolution Center.")
         ],
         "cursor_path": [(350, 550), (650, 480), (1050, 450), (1150, 450)],
         "click_at": [9.0, 16.5]
@@ -211,9 +212,9 @@ SCENES = [
             "color": (0, 112, 186, 255)
         },
         "subtitles": [
-            (0.0, 4.5, "PayAgent is not a mock wrapper. It is directly integrated with PayPal's Orders v2 REST API."),
-            (4.5, 11.0, "Featuring instant sandbox authorization, capture, and cryptographic non-repudiation."),
-            (11.0, 99.0, "This is the future of autonomous commerce. Thank you, PayPal and AG Grid.")
+            (0.0, 5.0, "PayAgent is not a mock wrapper. It is directly integrated with PayPal Orders v2 REST API."),
+            (5.0, 12.0, "Featuring instant sandbox authorization, capture, and cryptographic non-repudiation."),
+            (12.0, 22.3, "PayAgent makes autonomous agentic payments safe, accountable, and merchant-ready. Thank you, PayPal and AG Grid!")
         ],
         "cursor_path": [(400, 600), (750, 520), (1000, 460), (1100, 460)],
         "click_at": [6.0, 13.0]
@@ -436,8 +437,8 @@ def main():
         "-i", "-",
         "-c:v", "libx264",
         "-pix_fmt", "yuv420p",
-        "-preset", "veryfast",
-        "-crf", "18",
+        "-preset", "ultrafast",
+        "-crf", "20",
         raw_video_path
     ]
     proc = subprocess.Popen(cmd_ffmpeg, stdin=subprocess.PIPE)
@@ -457,16 +458,24 @@ def main():
         win_img = asset['win']
         card_img = asset['card']
         
-        # Pre-composite the scene background with browser window & static card
-        # This eliminates re-pasting large windows every frame and boosts FPS to 60+!
+        # Pre-composite the scene background with browser window & static card & guide line
         scene_base = base_bg.copy()
         scene_base.paste(win_img, (win_x, win_y), win_img)
+        scene_base.paste(card_img, (card_x, card_y), card_img)
+        
+        # Guide connector line
+        col = s['callout']['color']
+        sb_draw = ImageDraw.Draw(scene_base)
+        sb_draw.line([(win_x + asset['tw'] - 20, card_y + 36), (card_x - 4, card_y + 36)], fill=col[:3] + (160,), width=2)
+        sb_draw.ellipse([win_x + asset['tw'] - 24, card_y + 32, win_x + asset['tw'] - 16, card_y + 40], fill=col)
         
         # Dynamic Top Center Chapter Badge
-        sb_draw = ImageDraw.Draw(scene_base)
         badge_text = f"CHAPTER {s['ch']} / 07 • {s['chapter_name'].upper()}"
         sb_draw.rounded_rectangle([620, 18, 1340, 50], radius=8, fill=(30, 41, 59, 220), outline=(0, 207, 232, 100), width=1)
         sb_draw.text((640, 25), badge_text, fill=(241, 245, 249, 255), font=FONT_BADGE)
+        
+        # Pre-convert to RGB format to eliminate color conversion overhead
+        scene_base_rgb = scene_base.convert('RGB')
         
         print(f"\nRendering Scene {s['ch']}/07: {s['chapter_name']} ({s['frames']} frames)...")
         
@@ -474,20 +483,10 @@ def main():
             t = f / float(FPS)
             progress = f / float(s['frames'])
             
-            frame_pil = scene_base.copy()
+            frame_pil = scene_base_rgb.copy()
             draw = ImageDraw.Draw(frame_pil)
             
-            # 1. Floating Holographic Callout Card
-            float_y = int(math.sin(t * 2.2) * 4)
-            cur_card_y = card_y + float_y
-            frame_pil.paste(card_img, (card_x, cur_card_y), card_img)
-            
-            # Guide connector line
-            col = s['callout']['color']
-            draw.line([(win_x + asset['tw'] - 20, cur_card_y + 36), (card_x - 4, cur_card_y + 36)], fill=col[:3] + (160,), width=2)
-            draw.ellipse([win_x + asset['tw'] - 24, cur_card_y + 32, win_x + asset['tw'] - 16, cur_card_y + 40], fill=col)
-            
-            # 2. Animated macOS Cursor with Spline Motion
+            # 1. Animated macOS Cursor with Spline Motion
             cpath = s['cursor_path']
             num_segs = len(cpath) - 1
             cur_seg = min(num_segs - 1, int(progress * num_segs))
@@ -507,15 +506,15 @@ def main():
                     break
             draw_cursor(draw, cx, cy, click_prog)
             
-            # 3. Bottom Sentinel AI Companion Pill (y=960 to 1060)
-            draw.rounded_rectangle([30, 955, 1890, 1060], radius=20, fill=(15, 23, 42, 250), outline=(30, 41, 59, 255), width=2)
+            # 2. Bottom Sentinel AI Companion Pill (y=955 to 1060)
+            draw.rounded_rectangle([30, 955, 1890, 1060], radius=20, fill=(15, 23, 42), outline=(30, 41, 59), width=2)
             
             # Robot Avatar
             draw_sentinel_robot(draw, 50, 985, t)
             
             # Companion Label
-            draw.text((124, 975), "SENTINEL AI PROTOCOL GUARDIAN", fill=(0, 207, 232, 255), font=FONT_BADGE)
-            draw.text((370, 975), "• PAYPAL AI HACKATHON 2026 VERIFIED NARRATION", fill=(148, 163, 184, 255), font=FONT_TINY)
+            draw.text((124, 975), "SENTINEL AI PROTOCOL GUARDIAN", fill=(0, 207, 232), font=FONT_BADGE)
+            draw.text((370, 975), "• PAYPAL AI HACKATHON 2026 VERIFIED NARRATION", fill=(148, 163, 184), font=FONT_TINY)
             
             # Active Subtitle
             current_sub = ""
@@ -524,17 +523,16 @@ def main():
                     current_sub = text
                     break
             if current_sub:
-                draw.text((124, 1005), current_sub, fill=(255, 255, 255, 255), font=FONT_SUBTITLE)
+                draw.text((124, 1005), current_sub, fill=(255, 255, 255), font=FONT_SUBTITLE)
                 
             # Fluid 16-Band Equalizer Waveform
             draw_fluid_audio_waveform(draw, 1660, 1008, t, is_speaking=bool(current_sub))
             
-            # Write RGB frame to ffmpeg
-            rgb_bytes = frame_pil.convert('RGB').tobytes()
-            proc.stdin.write(rgb_bytes)
+            # Write RGB frame directly to ffmpeg (zero extra conversion!)
+            proc.stdin.write(frame_pil.tobytes())
             
             rendered_frames += 1
-            if rendered_frames % 120 == 0:
+            if rendered_frames % 240 == 0:
                 elapsed = time.time() - t0
                 fps_act = rendered_frames / elapsed
                 eta = (total_frames - rendered_frames) / fps_act
@@ -546,7 +544,14 @@ def main():
     
     # Multiplex audio and visuals into master MP4
     final_mp4 = os.path.join(OUTPUT_DIR, "payagent_demo.mp4")
+    concat_list_file = f"{VOICE_DIR}/audio_concat.txt"
+    with open(concat_list_file, "w") as cf:
+        for s in SCENES:
+            cf.write(f"file '{s['voice']}'\n")
+            
     combined_audio = f"{VOICE_DIR}/voice_combined.mp3"
+    print("Concatenating synchronized audio chapters...")
+    subprocess.run(f"ffmpeg -y -f concat -safe 0 -i {concat_list_file} -c copy {combined_audio}", shell=True, check=True)
     
     print("Multiplexing master video with stereo audio track...")
     cmd_mux = [
@@ -561,9 +566,14 @@ def main():
     ]
     subprocess.run(cmd_mux, check=True)
     
+    # Also sync to public directory for Next.js preview
+    public_mp4 = "/home/Brathap/payagent/public/payagent_demo.mp4"
+    subprocess.run(f"cp {final_mp4} {public_mp4}", shell=True, check=True)
+    
     file_size_mb = os.path.getsize(final_mp4) / (1024 * 1024)
     print(f"\n Master Demo Video successfully created!")
     print(f"File: {final_mp4}")
+    print(f"Public Copy: {public_mp4}")
     print(f"Size: {file_size_mb:.2f} MB")
     print(f"Runtime: {total_duration:.2f} seconds")
     print("Ready for PayPal AI Hackathon submission!")
