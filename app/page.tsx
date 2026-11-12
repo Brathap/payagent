@@ -32,12 +32,12 @@ export default function Home() {
         setActiveTab(tabParam);
       }
       const themeParam = params.get('theme');
-      if (themeParam === 'light') {
-        setTheme('light');
-      } else if (themeParam === 'dark') {
+      const savedTheme = typeof window !== 'undefined' ? localStorage.getItem('payagent_theme') : null;
+      if (themeParam === 'dark' || (!themeParam && savedTheme === 'dark')) {
         setTheme('dark');
+      } else if (themeParam === 'light' || (!themeParam && savedTheme === 'light')) {
+        setTheme('light');
       } else {
-        // Enforce pure light theme default for high-contrast fintech aesthetics
         setTheme('light');
       }
       if (params.get('modal') === 'protocol') {
@@ -51,6 +51,22 @@ export default function Home() {
       }
     } catch (e) {}
   }, []);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+        document.body.classList.add('dark');
+        document.body.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+        document.body.classList.add('light');
+        document.body.classList.remove('dark');
+      }
+    }
+  }, [theme]);
 
   const handleSetTheme = (newTheme: 'light' | 'dark') => {
     setTheme(newTheme);

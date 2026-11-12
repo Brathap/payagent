@@ -40,7 +40,7 @@ SCENES = [
         "title": "The Agentic Payment Consent Protocol (APCP)",
         "type": "modal_crop",
         "src": "/home/Brathap/payagent/public/screens/screen_protocol_modal.png",
-        "crop": (560, 180, 1360, 900),
+        "crop": (500, 100, 1420, 960),
         "size": (1300, 750),
         "voice": "/tmp/payagent_3d_claude_video/voice_01.mp3",
         "callout": {
@@ -404,8 +404,8 @@ def main():
         src_pts = np.float32([[0, 0], [tw, 0], [tw, th], [0, th]])
         
         # Center positions for UI card: sits nicely on left-center, callout on right
-        target_cx = 760
-        target_cy = 470 if th >= 700 else 460
+        target_cx = 740
+        target_cy = 440
         
         last_warp_frame = -99
         last_warped_pil = None
@@ -417,8 +417,8 @@ def main():
             # Smooth 3D camera dolly-in & yaw drift
             # Camera gently pushes from 0.98 to 1.04
             zoom = 0.98 + 0.06 * progress
-            yaw = -0.015 + 0.010 * progress
-            pitch = 0.018 - 0.008 * progress
+            yaw = -0.012 + 0.008 * progress
+            pitch = 0.015 - 0.006 * progress
             
             hw = (tw * zoom) / 2.0
             hh = (th * zoom) / 2.0
@@ -439,24 +439,11 @@ def main():
             frame_pil = base_grid_pil.copy()
             draw = ImageDraw.Draw(frame_pil)
             
-            # 1. Paste 3D perspective UI card
+            # 1. Paste 3D perspective UI card (fills screen from y=30 to y=850, NO blank space on top!)
             frame_pil.paste(last_warped_pil, (0, 0), last_warped_pil)
             
-            # 2. Top Header Bar
-            draw.rectangle([0, 0, WIDTH, 72], fill=(255, 255, 255, 250))
-            draw.line([0, 72, WIDTH, 72], fill=(226, 232, 240, 255), width=1)
-            
-            draw.rounded_rectangle([40, 14, 210, 58], radius=10, fill=(0, 112, 186, 255))
-            draw.text((58, 22), "PayAgent", fill=(255, 255, 255, 255), font=FONT_TITLE)
-            
-            draw.rounded_rectangle([230, 18, 720, 54], radius=8, fill=(0, 112, 186, 18), outline=(0, 112, 186, 70), width=1)
-            draw.text((246, 26), f"CHAPTER {s['ch']} OF 07 • {s['tag']}", fill=(0, 112, 186, 255), font=FONT_BADGE)
-            
-            draw.rounded_rectangle([WIDTH - 460, 18, WIDTH - 40, 54], radius=8, fill=(16, 185, 129, 20), outline=(16, 185, 129, 80), width=1)
-            draw.text((WIDTH - 438, 26), "● ED25519 CLIENT ENCLAVE: SECURE • 38ms", fill=(16, 185, 129, 255), font=FONT_BADGE)
-            
-            # 3. Holographic Callout Card on Right
-            fx, fy = 1440, 170
+            # 2. Holographic Callout Card on Right
+            fx, fy = 1450, 140
             float_y = int(math.sin(t * 3.0) * 5)
             frame_pil.paste(asset['card'], (fx, fy + float_y), asset['card'])
             

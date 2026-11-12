@@ -76,6 +76,7 @@ export default function NovaCanvas({
   onStartTour,
 }: NovaCanvasProps) {
   const isLight = theme === 'light';
+  const [canvasView, setCanvasView] = useState<'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads'>('all');
 
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -611,8 +612,47 @@ export default function NovaCanvas({
         </div>
       </div>
 
-      {/* Hero Command Center & Fluid Voice Orb */}
-      <div className="text-center space-y-4 max-w-3xl mx-auto">
+      {/* Interactive Module View Controller */}
+      <div className={`p-2 rounded-2xl border flex items-center justify-between gap-2 overflow-x-auto no-scrollbar text-xs font-bold transition shadow-sm ${
+        isLight ? 'bg-white border-slate-200 text-slate-700' : 'bg-[#0f172a] border-white/10 text-slate-200 shadow-xl'
+      }`}>
+        <div className="flex items-center space-x-1.5 shrink-0">
+          <span className={`text-[10.5px] uppercase font-mono px-2 font-bold shrink-0 ${isLight ? 'text-blue-700' : 'text-cyan-400'}`}>
+            Module Views:
+          </span>
+          {[
+            { id: 'all', label: '🌐 All Modules' },
+            { id: 'procure', label: '🛍️ Autonomous Procurement' },
+            { id: 'bidding', label: '🏷️ 3-Merchant Bidding' },
+            { id: 'dispute', label: '⚖️ Dispute Defense' },
+            { id: 'roi', label: '📈 ROI Calculator' },
+            { id: 'payloads', label: '🔒 PayPal v2 REST' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => {
+                if (soundEnabled) playSound('click');
+                setCanvasView(tab.id as any);
+              }}
+              className={`px-3 py-1.5 rounded-xl transition text-xs font-bold cursor-pointer flex items-center space-x-1 ${
+                canvasView === tab.id
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : isLight
+                    ? 'hover:bg-slate-100 text-slate-700'
+                    : 'hover:bg-white/10 text-slate-300'
+              }`}
+            >
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* SECTION 1: Autonomous Procurement Pipeline */}
+      {(canvasView === 'all' || canvasView === 'procure') && (
+        <>
+          {/* Hero Command Center & Fluid Voice Orb */}
+          <div className="text-center space-y-4 max-w-3xl mx-auto">
         
         {/* Animated Siri / Apple Style Voice Waveform Indicator */}
         {isVoiceActive ? (
@@ -731,10 +771,10 @@ export default function NovaCanvas({
       </div>
 
       {/* Spending Mandate Strip */}
-      <div className={`rounded-3xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 border transition ${
+      <div id="shopper-mandate" className={`rounded-3xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 border transition scroll-mt-20 ${
         isLight
-          ? 'bg-white border-slate-200/90 shadow-sm'
-          : 'nova-card'
+          ? 'bg-white border-slate-200/90 shadow-sm text-slate-900'
+          : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
       }`}>
         <div className="flex items-center space-x-3">
           <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 shrink-0">
@@ -755,7 +795,7 @@ export default function NovaCanvas({
         <div className="flex flex-wrap items-center gap-4 text-xs">
           {/* Slider */}
           <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border ${
-            isLight ? 'bg-slate-100/90 border-slate-200 text-slate-800' : 'bg-black/40 border-white/5 text-slate-300'
+            isLight ? 'bg-slate-100/90 border-slate-200 text-slate-800' : 'bg-slate-800/60 border-white/10 text-slate-300'
           }`}>
             <span className={isLight ? 'text-slate-600' : 'text-slate-400'}>Ceiling:</span>
             <input
@@ -772,7 +812,7 @@ export default function NovaCanvas({
 
           {/* Eco toggle */}
           <label className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border cursor-pointer ${
-            isLight ? 'bg-slate-100/90 border-slate-200 text-slate-800' : 'bg-black/40 border-white/5 text-slate-300'
+            isLight ? 'bg-slate-100/90 border-slate-200 text-slate-800' : 'bg-slate-800/60 border-white/10 text-slate-300'
           }`}>
             <Leaf className="w-3.5 h-3.5 text-emerald-500" />
             <span>Eco-Only</span>
@@ -786,7 +826,7 @@ export default function NovaCanvas({
 
           {/* Rebate toggle */}
           <label className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border cursor-pointer ${
-            isLight ? 'bg-slate-100/90 border-slate-200 text-slate-800' : 'bg-black/40 border-white/5 text-slate-300'
+            isLight ? 'bg-slate-100/90 border-slate-200 text-slate-800' : 'bg-slate-800/60 border-white/10 text-slate-300'
           }`}>
             <Tag className="w-3.5 h-3.5 text-amber-500" />
             <span>10% AI Rebate</span>
@@ -801,10 +841,10 @@ export default function NovaCanvas({
       </div>
 
       {/* Autonomous Agent Execution Pipeline & Arbitration Strip */}
-      <div className={`rounded-3xl p-4 sm:p-5 space-y-3.5 shadow-lg border transition ${
+      <div id="arbitration-pipeline" className={`rounded-3xl p-4 sm:p-5 space-y-3.5 shadow-lg border transition scroll-mt-20 ${
         isLight
-          ? 'bg-white border-slate-200/90 shadow-sm'
-          : 'nova-card'
+          ? 'bg-white border-slate-200/90 shadow-sm text-slate-900'
+          : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
       }`}>
         <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b ${
           isLight ? 'border-slate-100' : 'border-white/5'
@@ -837,7 +877,7 @@ export default function NovaCanvas({
           <div className={`p-3 rounded-2xl border flex items-start space-x-2.5 text-xs ${
             isLight
               ? 'bg-blue-50/70 border-blue-200/80 text-slate-800'
-              : 'bg-black/40 border-white/5 text-slate-300'
+              : 'bg-slate-800/60 border-white/10 text-slate-300'
           }`}>
             <Sparkles className="w-4 h-4 text-cyan-500 shrink-0 mt-0.5" />
             <p className="leading-relaxed">
@@ -854,7 +894,7 @@ export default function NovaCanvas({
               className={`p-2.5 rounded-xl border flex items-start space-x-2 text-[11px] ${
                 isLight
                   ? 'bg-slate-50/80 border-slate-200/80'
-                  : 'bg-black/30 border-white/5'
+                  : 'bg-slate-800/60 border-white/10'
               }`}
             >
               <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
@@ -884,8 +924,8 @@ export default function NovaCanvas({
         {/* Left: Product Feature & Spec Radar */}
         <div className={`lg:col-span-7 rounded-3xl p-6 space-y-5 border transition ${
           isLight
-            ? 'bg-white border-slate-200/90 shadow-sm'
-            : 'nova-card'
+            ? 'bg-white border-slate-200/90 shadow-sm text-slate-900'
+            : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
         }`}>
           <div className={`flex items-center justify-between pb-3 border-b ${
             isLight ? 'border-slate-100' : 'border-white/5'
@@ -969,7 +1009,7 @@ export default function NovaCanvas({
                         : 'bg-blue-600/20 border-blue-500/50 shadow-md'
                       : isLight
                       ? 'bg-slate-50 hover:bg-slate-100 border-slate-200'
-                      : 'bg-black/30 border-white/5 hover:border-white/20'
+                      : 'bg-slate-800/60 border-white/10 hover:border-white/20'
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -991,8 +1031,8 @@ export default function NovaCanvas({
         {/* Right: PayPal Smart Checkout Stage & Living Receipt */}
         <div className={`lg:col-span-5 rounded-3xl p-6 space-y-5 border transition ${
           isLight
-            ? 'bg-white border-blue-500/40 shadow-xl shadow-blue-500/5 ring-1 ring-blue-500/20'
-            : 'nova-card-glow'
+            ? 'bg-white border-blue-500/40 shadow-xl shadow-blue-500/5 ring-1 ring-blue-500/20 text-slate-900'
+            : 'bg-[#0f172a] border-blue-500/40 shadow-xl ring-1 ring-blue-500/20 text-white'
         }`}>
           
           <div className={`flex items-center justify-between pb-3 border-b ${
@@ -1050,7 +1090,7 @@ export default function NovaCanvas({
 
           {/* Payment Method Selector Tabs */}
           <div className={`grid grid-cols-3 gap-1.5 p-1 rounded-2xl border text-[11px] font-bold ${
-            isLight ? 'bg-slate-100 border-slate-200' : 'bg-black/60 border-white/10'
+            isLight ? 'bg-slate-100 border-slate-200' : 'bg-slate-800/80 border-white/10'
           }`}>
             <button
               onClick={() => setActivePaymentMethod('paypal')}
@@ -1088,7 +1128,7 @@ export default function NovaCanvas({
           <div className={`py-2 px-3 rounded-xl border flex items-center justify-between text-[10.5px] font-mono ${
             isLight
               ? 'bg-slate-50 border-slate-200 text-slate-700'
-              : 'bg-black/50 border-white/5 text-slate-400'
+              : 'bg-slate-800/60 border-white/10 text-slate-400'
           }`}>
             <span className="flex items-center space-x-1.5">
               <KeyRound className="w-3 h-3 text-blue-500 dark:text-cyan-400" />
@@ -1187,15 +1227,20 @@ export default function NovaCanvas({
         </div>
 
       </div>
+      </>
+      )}
 
       {/* ========================================================================= */}
-      {/* SECTION A: Interactive Multi-Agent Architecture Flow Visualizer Map */}
+      {/* SECTION 2: Flow Map & PayPal Orders v2 Payload Inspector */}
       {/* ========================================================================= */}
-      <div className={`rounded-3xl p-6 sm:p-7 border space-y-6 transition shadow-xl ${
-        isLight
-          ? 'bg-gradient-to-b from-white to-slate-50 border-slate-200/90 shadow-slate-200/50'
-          : 'bg-[#090e1a]/90 border-blue-500/25 nova-card'
-      }`}>
+      {(canvasView === 'all' || canvasView === 'payloads') && (
+        <>
+          {/* SECTION A: Interactive Multi-Agent Architecture Flow Visualizer Map */}
+          <div className={`rounded-3xl p-6 sm:p-7 border space-y-6 transition shadow-xl ${
+            isLight
+              ? 'bg-gradient-to-b from-white to-slate-50 border-slate-200/90 shadow-slate-200/50 text-slate-900'
+              : 'bg-[#0f172a] border-white/10 text-white shadow-xl'
+          }`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-200/80 dark:border-white/10">
           <div>
             <div className="flex items-center space-x-2">
@@ -1299,7 +1344,7 @@ export default function NovaCanvas({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         
         <div className={`p-5 rounded-3xl border transition shadow-sm ${
-          isLight ? 'bg-white border-slate-200/90' : 'nova-card'
+          isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
         }`}>
           <div className="flex items-center justify-between pb-2">
             <span className={`text-xs font-bold uppercase tracking-wider font-mono ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -1319,7 +1364,7 @@ export default function NovaCanvas({
         </div>
 
         <div className={`p-5 rounded-3xl border transition shadow-sm ${
-          isLight ? 'bg-white border-slate-200/90' : 'nova-card'
+          isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
         }`}>
           <div className="flex items-center justify-between pb-2">
             <span className={`text-xs font-bold uppercase tracking-wider font-mono ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -1339,7 +1384,7 @@ export default function NovaCanvas({
         </div>
 
         <div className={`p-5 rounded-3xl border transition shadow-sm ${
-          isLight ? 'bg-white border-slate-200/90' : 'nova-card'
+          isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
         }`}>
           <div className="flex items-center justify-between pb-2">
             <span className={`text-xs font-bold uppercase tracking-wider font-mono ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -1359,7 +1404,7 @@ export default function NovaCanvas({
         </div>
 
         <div className={`p-5 rounded-3xl border transition shadow-sm ${
-          isLight ? 'bg-white border-slate-200/90' : 'nova-card'
+          isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
         }`}>
           <div className="flex items-center justify-between pb-2">
             <span className={`text-xs font-bold uppercase tracking-wider font-mono ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -1383,10 +1428,10 @@ export default function NovaCanvas({
       {/* ========================================================================= */}
       {/* SECTION C: Live PayPal Orders v2 REST Payload Inspector */}
       {/* ========================================================================= */}
-      <div className={`rounded-3xl p-6 sm:p-7 border space-y-5 transition shadow-lg ${
+      <div id="paypal-payloads" className={`rounded-3xl p-6 sm:p-7 border space-y-5 transition shadow-lg scroll-mt-20 ${
         isLight
-          ? 'bg-white border-slate-200/90 shadow-sm'
-          : 'bg-[#080d19]/90 border-blue-500/20 nova-card'
+          ? 'bg-white border-slate-200/90 shadow-sm text-slate-900'
+          : 'bg-[#0f172a] border-white/10 text-white shadow-xl'
       }`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/80 dark:border-white/10">
           <div>
@@ -1486,7 +1531,7 @@ export default function NovaCanvas({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           
           <div className={`p-6 rounded-3xl border transition shadow-sm space-y-3.5 ${
-            isLight ? 'bg-white border-slate-200/90' : 'nova-card'
+            isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
           }`}>
             <div className="w-10 h-10 rounded-2xl bg-blue-500/15 text-blue-600 dark:text-cyan-400 flex items-center justify-center">
               <Sliders className="w-5 h-5" />
@@ -1503,7 +1548,7 @@ export default function NovaCanvas({
           </div>
 
           <div className={`p-6 rounded-3xl border transition shadow-sm space-y-3.5 ${
-            isLight ? 'bg-white border-slate-200/90' : 'nova-card'
+            isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
           }`}>
             <div className="w-10 h-10 rounded-2xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
               <Cpu className="w-5 h-5" />
@@ -1520,7 +1565,7 @@ export default function NovaCanvas({
           </div>
 
           <div className={`p-6 rounded-3xl border transition shadow-sm space-y-3.5 ${
-            isLight ? 'bg-white border-slate-200/90' : 'nova-card'
+            isLight ? 'bg-white border-slate-200/90' : isLight ? 'bg-white border-slate-200/90 shadow-sm text-slate-900' : 'bg-[#0f172a] border-white/10 shadow-xl text-white'
           }`}>
             <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <ShieldCheck className="w-5 h-5" />
@@ -1567,10 +1612,10 @@ export default function NovaCanvas({
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-xs font-mono px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10">
+            <span className="text-xs font-mono px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10">
               Latency: <strong className="text-emerald-600">38ms</strong>
             </span>
-            <span className="text-xs font-mono px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10">
+            <span className="text-xs font-mono px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10">
               Model: <strong className="text-blue-600">APCP-Reasoner-v2</strong>
             </span>
           </div>
@@ -1627,14 +1672,17 @@ export default function NovaCanvas({
           </div>
         </div>
       </div>
+      </>
+      )}
 
       {/* =========================================================================
           MODULE B: MULTI-MERCHANT AUTONOMOUS BIDDING & CONCESSION MATRIX
          ========================================================================= */}
-      <div className={`p-8 rounded-3xl border shadow-xl transition-all duration-300 space-y-6 ${
+      {(canvasView === 'all' || canvasView === 'bidding') && (
+      <div id="bidding-matrix" className={`p-8 rounded-3xl border shadow-xl transition-all duration-300 space-y-6 scroll-mt-20 ${
         isLight
-          ? 'bg-gradient-to-b from-white via-slate-50/60 to-white border-slate-200 shadow-slate-200/60'
-          : 'bg-[#0b111e]/90 border-white/10'
+          ? 'bg-gradient-to-b from-white via-slate-50/60 to-white border-slate-200 shadow-slate-200/60 text-slate-900'
+          : 'bg-[#0f172a] border-white/10 text-white shadow-xl'
       }`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-white/10">
           <div className="flex items-center space-x-3">
@@ -1660,7 +1708,7 @@ export default function NovaCanvas({
           <div className={`p-6 rounded-3xl border-2 transition relative ${
             selectedBiddingSupplier === 'eco-supply'
               ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-lg shadow-emerald-500/10'
-              : 'border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 opacity-80'
+              : 'border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800/60 opacity-80'
           }`}>
             <span className="absolute -top-3 left-6 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow">
               Selected by Agent (Best Value)
@@ -1696,78 +1744,98 @@ export default function NovaCanvas({
           </div>
 
           {/* Merchant 2: Global TechDirect */}
-          <div className="p-6 rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 transition relative">
+          <div className={`p-6 rounded-3xl border transition relative ${
+            isLight
+              ? 'border-slate-200 bg-white text-slate-900 shadow-sm'
+              : 'border-white/10 bg-[#0f172a] text-white shadow-xl'
+          }`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-base text-slate-900 dark:text-white">Global TechDirect</h3>
-              <span className="text-xs font-mono font-bold text-slate-500 bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded-lg">No Concession</span>
+              <h3 className={`font-bold text-base ${isLight ? 'text-slate-900' : 'text-white'}`}>Global TechDirect</h3>
+              <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-lg ${
+                isLight ? 'text-slate-600 bg-slate-100' : 'text-slate-300 bg-white/10'
+              }`}>No Concession</span>
             </div>
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-white/5">
-                <span className="text-slate-500">Retail Price:</span>
-                <span className="text-slate-700 dark:text-slate-300 font-mono">$94.50</span>
+              <div className={`flex justify-between py-1 border-b ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
+                <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>Retail Price:</span>
+                <span className="text-slate-400 font-mono">$94.50</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-white/5">
-                <span className="text-slate-700 dark:text-slate-300 font-semibold">APCP Arbitrated:</span>
-                <span className="font-semibold text-slate-700 dark:text-slate-300 font-mono">$94.50</span>
+              <div className={`flex justify-between py-1 border-b ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
+                <span className={`font-semibold ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>APCP Arbitrated:</span>
+                <span className={`font-semibold font-mono ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>$94.50</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-white/5">
-                <span className="text-slate-500">ESG Sustainability:</span>
-                <span className="font-semibold text-amber-600">72 / 100</span>
+              <div className={`flex justify-between py-1 border-b ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
+                <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>ESG Sustainability:</span>
+                <span className="font-semibold text-amber-500">72 / 100</span>
               </div>
               <div className="flex justify-between py-1">
-                <span className="text-slate-500">Fulfillment:</span>
-                <span className="font-semibold text-slate-500">Standard 3-Day</span>
+                <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>Fulfillment:</span>
+                <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>Standard 3-Day</span>
               </div>
             </div>
             <button
               onClick={() => setSelectedBiddingSupplier('tech-direct')}
-              className="mt-4 w-full py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-white/20 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition cursor-pointer"
+              className={`mt-4 w-full py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                isLight
+                  ? 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                  : 'border-white/20 text-slate-300 hover:bg-white/5'
+              }`}
             >
               Over-Price Rejected
             </button>
           </div>
 
           {/* Merchant 3: FastShip Retail */}
-          <div className="p-6 rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 transition relative">
+          <div className={`p-6 rounded-3xl border transition relative ${
+            isLight
+              ? 'border-slate-200 bg-white text-slate-900 shadow-sm'
+              : 'border-white/10 bg-[#0f172a] text-white shadow-xl'
+          }`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-base text-slate-900 dark:text-white">FastShip Retail</h3>
+              <h3 className={`font-bold text-base ${isLight ? 'text-slate-900' : 'text-white'}`}>FastShip Retail</h3>
               <span className="text-xs font-mono font-bold text-blue-600 bg-blue-100 dark:bg-blue-900/50 px-2 py-0.5 rounded-lg">-5% Rebate</span>
             </div>
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-white/5">
-                <span className="text-slate-500">Retail Price:</span>
+              <div className={`flex justify-between py-1 border-b ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
+                <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>Retail Price:</span>
                 <span className="line-through text-slate-400 font-mono">$99.00</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-white/5">
-                <span className="text-slate-700 dark:text-slate-300 font-semibold">APCP Arbitrated:</span>
-                <span className="font-semibold text-slate-700 dark:text-slate-300 font-mono">$94.05</span>
+              <div className={`flex justify-between py-1 border-b ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
+                <span className={`font-semibold ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>APCP Arbitrated:</span>
+                <span className={`font-semibold font-mono ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>$94.05</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-white/5">
-                <span className="text-slate-500">ESG Sustainability:</span>
+              <div className={`flex justify-between py-1 border-b ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
+                <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>ESG Sustainability:</span>
                 <span className="font-semibold text-rose-500">54 / 100</span>
               </div>
               <div className="flex justify-between py-1">
-                <span className="text-slate-500">Fulfillment:</span>
-                <span className="font-semibold text-slate-500">Delayed Dispatch</span>
+                <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>Fulfillment:</span>
+                <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>Delayed Dispatch</span>
               </div>
             </div>
             <button
               onClick={() => setSelectedBiddingSupplier('fast-ship')}
-              className="mt-4 w-full py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-white/20 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition cursor-pointer"
+              className={`mt-4 w-full py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                isLight
+                  ? 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                  : 'border-white/20 text-slate-300 hover:bg-white/5'
+              }`}
             >
               High Carbon Footprint
             </button>
           </div>
         </div>
       </div>
+      )}
 
       {/* =========================================================================
           MODULE C: ENTERPRISE ROI & AUTONOMOUS SAVINGS CALCULATOR
          ========================================================================= */}
+      {(canvasView === 'all' || canvasView === 'roi') && (
       <div className={`p-8 rounded-3xl border shadow-xl transition-all duration-300 space-y-6 ${
         isLight
-          ? 'bg-gradient-to-b from-white via-slate-50/60 to-white border-slate-200 shadow-slate-200/60'
-          : 'bg-[#0b111e]/90 border-white/10'
+          ? 'bg-gradient-to-b from-white via-slate-50/60 to-white border-slate-200 shadow-slate-200/60 text-slate-900'
+          : 'bg-[#0f172a] border-white/10 text-white shadow-xl'
       }`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-white/10">
           <div className="flex items-center space-x-3">
@@ -1811,7 +1879,7 @@ export default function NovaCanvas({
 
         {/* Dynamic ROI Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-          <div className={`p-5 rounded-2xl border ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'} shadow-sm`}>
+          <div className={`p-5 rounded-2xl border ${isLight ? 'bg-slate-50/90 border-slate-200 text-slate-900' : 'bg-slate-800/70 border-white/10 text-white'} shadow-sm`}>
             <span className="text-xs text-slate-500 block mb-1">Direct 10% Rebate Savings</span>
             <span className="text-2xl font-black text-emerald-600 font-mono">
               +${(roiSpend * 0.10).toLocaleString()}
@@ -1819,7 +1887,7 @@ export default function NovaCanvas({
             <p className="text-[11px] text-slate-400 mt-1">Autonomous supplier concessions</p>
           </div>
 
-          <div className={`p-5 rounded-2xl border ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'} shadow-sm`}>
+          <div className={`p-5 rounded-2xl border ${isLight ? 'bg-slate-50/90 border-slate-200 text-slate-900' : 'bg-slate-800/70 border-white/10 text-white'} shadow-sm`}>
             <span className="text-xs text-slate-500 block mb-1">Procurement Hours Reclaimed</span>
             <span className="text-2xl font-black text-blue-600 font-mono">
               {Math.round((roiSpend / 100) * 0.35)} hrs
@@ -1827,7 +1895,7 @@ export default function NovaCanvas({
             <p className="text-[11px] text-slate-400 mt-1">Eliminates manual PO workflows</p>
           </div>
 
-          <div className={`p-5 rounded-2xl border ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'} shadow-sm`}>
+          <div className={`p-5 rounded-2xl border ${isLight ? 'bg-slate-50/90 border-slate-200 text-slate-900' : 'bg-slate-800/70 border-white/10 text-white'} shadow-sm`}>
             <span className="text-xs text-slate-500 block mb-1">Synthetic Dispute Liability</span>
             <span className="text-2xl font-black text-purple-600 font-mono">
               $0.00
@@ -1835,7 +1903,7 @@ export default function NovaCanvas({
             <p className="text-[11px] text-slate-400 mt-1">Cryptographic Ed25519 protection</p>
           </div>
 
-          <div className={`p-5 rounded-2xl border ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'} shadow-sm`}>
+          <div className={`p-5 rounded-2xl border ${isLight ? 'bg-slate-50/90 border-slate-200 text-slate-900' : 'bg-slate-800/70 border-white/10 text-white'} shadow-sm`}>
             <span className="text-xs text-slate-500 block mb-1">Net Calculated ROI</span>
             <span className="text-2xl font-black text-emerald-600 font-mono">
               +{(14.2).toFixed(1)}x
@@ -1844,14 +1912,16 @@ export default function NovaCanvas({
           </div>
         </div>
       </div>
+      )}
 
       {/* =========================================================================
           MODULE D: 1-CLICK PAYPAL RESOLUTION CENTER DISPUTE DEFENSE SIMULATOR
          ========================================================================= */}
-      <div className={`p-8 rounded-3xl border shadow-xl transition-all duration-300 space-y-6 ${
+      {(canvasView === 'all' || canvasView === 'dispute') && (
+      <div id="dispute-defense" className={`p-8 rounded-3xl border shadow-xl transition-all duration-300 space-y-6 scroll-mt-20 ${
         isLight
-          ? 'bg-gradient-to-b from-white via-slate-50/60 to-white border-slate-200 shadow-slate-200/60'
-          : 'bg-[#0b111e]/90 border-white/10'
+          ? 'bg-gradient-to-b from-white via-slate-50/60 to-white border-slate-200 shadow-slate-200/60 text-slate-900'
+          : 'bg-[#0f172a] border-white/10 text-white shadow-xl'
       }`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-white/10">
           <div className="flex items-center space-x-3">
@@ -1924,32 +1994,33 @@ export default function NovaCanvas({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-              <div className="p-3 rounded-xl bg-white dark:bg-black/40 border border-emerald-200">
+              <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-emerald-200' : 'bg-slate-800/80 border-emerald-500/30'}`}>
                 <span className="text-slate-500 block text-[10px] uppercase font-mono">Case Reference</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">PP-DISP-882194-APCP</span>
+                <span className={`font-bold ${isLight ? 'text-slate-800' : 'text-white'}`}>PP-DISP-882194-APCP</span>
               </div>
-              <div className="p-3 rounded-xl bg-white dark:bg-black/40 border border-emerald-200">
+              <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-emerald-200' : 'bg-slate-800/80 border-emerald-500/30'}`}>
                 <span className="text-slate-500 block text-[10px] uppercase font-mono">Ed25519 Nonce Non-Repudiation</span>
-                <span className="font-mono font-bold text-emerald-600">{signatureNonce}</span>
+                <span className="font-mono font-bold text-emerald-500">{signatureNonce}</span>
               </div>
-              <div className="p-3 rounded-xl bg-white dark:bg-black/40 border border-emerald-200">
+              <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-emerald-200' : 'bg-slate-800/80 border-emerald-500/30'}`}>
                 <span className="text-slate-500 block text-[10px] uppercase font-mono">PayPal Orders v2 Capture</span>
-                <span className="font-mono font-bold text-blue-600">8XY291048821942A (Valid)</span>
+                <span className="font-mono font-bold text-blue-500">8XY291048821942A (Valid)</span>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-white dark:bg-black/40 border border-emerald-200 text-xs leading-relaxed text-slate-700 dark:text-slate-300">
+            <div className={`p-3.5 rounded-xl border text-xs leading-relaxed ${isLight ? 'bg-white border-emerald-200 text-slate-700' : 'bg-slate-800/80 border-emerald-500/30 text-slate-200'}`}>
               <strong>Automated Evidence Packet:</strong> The buyer explicitly signed an APCP client mandate ceiling of $100.00 at UTC 14:32:01. Transaction totaled $80.60 with Ed25519 signature verified. Under PayPal Merchant Protection rules, chargeback liability is 100% denied to the claimant and merchant funds are secured.
             </div>
           </div>
         )}
       </div>
+      )}
 
       {/* =========================================================================
           MODULE E: SECURITY, TRUST & INSTITUTIONAL COMPLIANCE CERTIFICATIONS
          ========================================================================= */}
-      <div className={`p-6 rounded-3xl border shadow-sm ${
-        isLight ? 'bg-white border-slate-200/90' : 'bg-[#0b111e]/80 border-white/10'
+      <div className={`p-6 rounded-3xl border shadow-sm transition ${
+        isLight ? 'bg-white border-slate-200/90 text-slate-900' : 'bg-[#0f172a] border-white/10 text-white shadow-xl'
       }`}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-white/5">
           <div className="pt-2 md:pt-0">

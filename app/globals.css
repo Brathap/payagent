@@ -1,23 +1,38 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
 }
 
-.light, body {
+/* Light Theme Variables */
+.light {
   --background: #f8fafc;
   --foreground: #0f172a;
   background-color: #f8fafc;
   color: #0f172a;
+}
+
+/* Dark Theme Variables */
+.dark {
+  --background: #060911;
+  --foreground: #f8fafc;
+  background-color: #060911;
+  color: #f8fafc;
+}
+
+body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
   margin: 0;
   padding: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Crisp Clean Light Mesh Background */
-.nova-mesh-light, body {
+/* Light Mesh Background */
+.nova-mesh-light {
   background-color: #f8fafc;
   background-image: 
     radial-gradient(circle at 18% 12%, rgba(0, 112, 186, 0.08) 0%, transparent 45%),
@@ -25,6 +40,19 @@
     radial-gradient(circle at 50% 80%, rgba(0, 207, 232, 0.05) 0%, transparent 50%),
     linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
     linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  background-attachment: fixed;
+}
+
+/* Dark Mesh Background */
+.nova-mesh-dark {
+  background-color: #060911;
+  background-image: 
+    radial-gradient(circle at 18% 12%, rgba(0, 112, 186, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 82% 8%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(0, 207, 232, 0.08) 0%, transparent 50%),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
   background-attachment: fixed;
 }
@@ -76,29 +104,64 @@
   animation: pulseLaser 3s ease-in-out infinite;
 }
 
-/* Luxury Light Card Styling */
-.nova-card {
+/* Scoped Card Styling for LIGHT THEME */
+.light .nova-card {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
   box-shadow: 0 10px 30px -5px rgba(0, 112, 186, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
 }
 
-.nova-card-glow {
+.light .nova-card-glow {
   background: #ffffff !important;
   border: 1.5px solid #0070ba !important;
-  box-shadow: 0 14px 40px -6px rgba(0, 112, 186, 0.15), 0 4px 10px -2px rgba(0, 0, 0, 0.03) !important;
+  color: #0f172a !important;
+  box-shadow: 0 14px 40px -6px rgba(0, 112, 186, 0.15) !important;
 }
 
-.glass-panel {
+.light .glass-panel {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
   box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04) !important;
 }
 
-.glass-panel-glow {
+.light .glass-panel-glow {
   background: #ffffff !important;
   border: 1.5px solid #0070ba !important;
+  color: #0f172a !important;
   box-shadow: 0 14px 40px -6px rgba(0, 112, 186, 0.14) !important;
+}
+
+/* Scoped Card Styling for DARK THEME */
+.dark .nova-card {
+  background: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .nova-card-glow {
+  background: #0f172a !important;
+  border: 1.5px solid #0070ba !important;
+  color: #f8fafc !important;
+  box-shadow: 0 14px 40px -6px rgba(0, 112, 186, 0.3) !important;
+}
+
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .glass-panel-glow {
+  background: rgba(15, 23, 42, 0.9) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1.5px solid #0070ba !important;
+  color: #f8fafc !important;
+  box-shadow: 0 14px 40px -6px rgba(0, 112, 186, 0.35) !important;
 }
 
 /* Slim scrollbars */
@@ -117,8 +180,8 @@
   background: rgba(148, 163, 184, 0.5);
 }
 
-/* AG Grid Light Theme overrides (Clean Quartz) */
-.ag-theme-quartz {
+/* AG Grid Scoped Themes */
+.light .ag-theme-quartz {
   --ag-background-color: #ffffff !important;
   --ag-header-background-color: #f8fafc !important;
   --ag-odd-row-background-color: #f8fafc !important;
@@ -126,10 +189,26 @@
   --ag-header-column-resize-handle-color: #0070ba !important;
   --ag-row-hover-color: rgba(0, 112, 186, 0.06) !important;
   --ag-selected-row-background-color: rgba(0, 112, 186, 0.12) !important;
+  --ag-foreground-color: #0f172a !important;
   --ag-font-family: inherit !important;
   font-size: 13px !important;
   border-radius: 1.25rem !important;
   border: 1px solid #e2e8f0 !important;
+}
+
+.dark .ag-theme-quartz {
+  --ag-background-color: #0f172a !important;
+  --ag-header-background-color: #0b111e !important;
+  --ag-odd-row-background-color: #0c1322 !important;
+  --ag-border-color: rgba(255, 255, 255, 0.08) !important;
+  --ag-header-column-resize-handle-color: #0070ba !important;
+  --ag-row-hover-color: rgba(0, 112, 186, 0.15) !important;
+  --ag-selected-row-background-color: rgba(0, 112, 186, 0.25) !important;
+  --ag-foreground-color: #f8fafc !important;
+  --ag-font-family: inherit !important;
+  font-size: 13px !important;
+  border-radius: 1.25rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .ag-header-cell-label {
