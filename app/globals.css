@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #090d16;
+  --background: #060911;
   --foreground: #f8fafc;
 }
 
@@ -14,17 +14,20 @@ body {
   padding: 0;
 }
 
-/* Ambient luxury dark mesh */
-.mesh-bg {
-  background-color: #080c15;
+/* Luxury ambient background with glowing radial accents */
+.nova-mesh {
+  background-color: #060911;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.08) 0px, transparent 50%);
+    radial-gradient(circle at 15% 15%, rgba(0, 112, 186, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 85% 10%, rgba(99, 102, 241, 0.16) 0%, transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(0, 207, 232, 0.12) 0%, transparent 50%),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
   background-attachment: fixed;
 }
 
-/* Hide scrollbars for chrome/safari/firefox for clean pill carousels */
+/* Hide scrollbars cleanly */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -33,41 +36,58 @@ body {
   scrollbar-width: none;
 }
 
-/* Custom sleek slim scrollbars */
+/* Card glass surfaces */
+.nova-card {
+  background: rgba(13, 19, 33, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.6);
+}
+
+.nova-card-glow {
+  background: rgba(14, 22, 38, 0.85);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(0, 112, 186, 0.4);
+  box-shadow: 0 0 45px -8px rgba(0, 112, 186, 0.25);
+}
+
+/* Slim scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(15, 23, 42, 0.5);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.3);
 }
 
-/* Custom AG Grid Dark Overrides */
+/* AG Grid Dark Theme overrides */
 .ag-theme-quartz-dark {
-  --ag-background-color: #0b101c !important;
-  --ag-header-background-color: #0f1627 !important;
-  --ag-odd-row-background-color: #090e18 !important;
+  --ag-background-color: #0b111e !important;
+  --ag-header-background-color: #0f182b !important;
+  --ag-odd-row-background-color: #090e1a !important;
   --ag-border-color: rgba(255, 255, 255, 0.08) !important;
-  --ag-header-column-resize-handle-color: #3b82f6 !important;
-  --ag-row-hover-color: rgba(59, 130, 246, 0.08) !important;
-  --ag-selected-row-background-color: rgba(59, 130, 246, 0.15) !important;
+  --ag-header-column-resize-handle-color: #0070ba !important;
+  --ag-row-hover-color: rgba(0, 112, 186, 0.1) !important;
+  --ag-selected-row-background-color: rgba(0, 112, 186, 0.2) !important;
   --ag-font-family: inherit !important;
   font-size: 13px !important;
-  border-radius: 1rem !important;
+  border-radius: 1.25rem !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .ag-header-cell-label {
   font-weight: 700 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
+  letter-spacing: 0.06em !important;
   color: #94a3b8 !important;
   font-size: 11px !important;
 }
