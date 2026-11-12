@@ -67,6 +67,7 @@ interface NovaCanvasProps {
   setCanvasView?: (view: 'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads') => void;
   onRegisterTriggerCheckout?: (fn: () => void) => void;
   onStartTour?: () => void;
+  initialCompleted?: boolean;
 }
 
 export default function NovaCanvas({
@@ -79,6 +80,7 @@ export default function NovaCanvas({
   setCanvasView: propSetCanvasView,
   onRegisterTriggerCheckout,
   onStartTour,
+  initialCompleted = false,
 }: NovaCanvasProps) {
   const isLight = theme === 'light';
   const [internalCanvasView, setInternalCanvasView] = useState<'all' | 'procure' | 'bidding' | 'dispute' | 'roi' | 'payloads'>('all');
@@ -94,7 +96,11 @@ export default function NovaCanvas({
   const [activePaymentMethod, setActivePaymentMethod] = useState<'paypal' | 'venmo' | 'payin4'>('paypal');
 
   const [processingPayment, setProcessingPayment] = useState(false);
-  const [completedOrder, setCompletedOrder] = useState<any>(null);
+  const [completedOrder, setCompletedOrder] = useState<any>(initialCompleted ? {
+    paypalOrderId: '8XY291048821942A',
+    paymentMethod: 'PayPal Orders v2 Instant Capture',
+    amount: 61.70,
+  } : null);
 
   useEffect(() => {
     try {

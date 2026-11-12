@@ -80,7 +80,7 @@ export default function ApiPlayground({ soundEnabled, theme = 'light' }: ApiPlay
       payload: {
         id: 'WH-EVENT-99814421',
         event_version: '1.0',
-        create_time: new Date().toISOString(),
+        create_time: '2026-11-12T12:00:00Z',
         event_type: 'CHECKOUT.ORDER.APPROVED',
         resource_type: 'checkout-order',
         summary: 'PayPal Sandbox Order 5KJ82910AA331201 authorized by buyer',
