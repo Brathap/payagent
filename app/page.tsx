@@ -9,6 +9,7 @@ import ConfigModal from '@/components/ConfigModal';
 import ProtocolModal from '@/components/ProtocolModal';
 import ParticleBackground from '@/components/ParticleBackground';
 import InteractiveTour from '@/components/InteractiveTour';
+import NovaAvatar from '@/components/NovaAvatar';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'canvas' | 'merchant' | 'api'>('canvas');
@@ -104,6 +105,18 @@ export default function Home() {
           <ApiPlayground soundEnabled={soundEnabled} theme={theme} />
         )}
       </main>
+
+      {/* Cool Interactive AI Copilot Avatar */}
+      <NovaAvatar
+        soundEnabled={soundEnabled}
+        theme={theme}
+        onTriggerDemo={() => setTourActive(true)}
+        onTriggerVoice={() => {
+          setActiveTab('canvas');
+          setTourQuery('Eco travel backpack under $70');
+        }}
+        onNavigateToMerchant={() => setActiveTab('merchant')}
+      />
 
       {/* Autonomous Guided Interactive Tour */}
       <InteractiveTour
