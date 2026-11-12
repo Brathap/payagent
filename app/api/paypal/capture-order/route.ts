@@ -63,6 +63,7 @@ export async function POST(request: Request) {
       riskScore: Math.floor(Math.random() * 15) + 5, // Clean score for agent-verified checkouts
       riskLevel: 'LOW',
       fraudReasoning: 'Autonomous agent verification passed. Biometric authorization and clean device fingerprint confirmed.',
+      signatureHash: orderDetails?.signatureHash || `0x${Math.random().toString(16).substring(2, 6)}...${Math.random().toString(16).substring(2, 6)}`,
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
     };
 

@@ -8,6 +8,7 @@ interface NavbarProps {
   activeTab: 'shopper' | 'merchant';
   setActiveTab: (tab: 'shopper' | 'merchant') => void;
   onOpenSettings: () => void;
+  onOpenProtocol: () => void;
   soundEnabled: boolean;
   setSoundEnabled: (val: boolean) => void;
 }
@@ -16,6 +17,7 @@ export default function Navbar({
   activeTab,
   setActiveTab,
   onOpenSettings,
+  onOpenProtocol,
   soundEnabled,
   setSoundEnabled,
 }: NavbarProps) {
@@ -100,6 +102,18 @@ export default function Navbar({
 
         {/* Right utility actions */}
         <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+          <button
+            onClick={() => {
+              if (soundEnabled) playSound('click');
+              onOpenProtocol();
+            }}
+            title="View Protocol Specs & Architecture"
+            className="hidden sm:flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-bold transition"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            <span>Protocol Spec</span>
+          </button>
+
           <button
             onClick={() => {
               const next = !soundEnabled;

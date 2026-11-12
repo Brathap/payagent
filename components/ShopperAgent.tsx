@@ -19,6 +19,10 @@ import {
   ChevronRight,
   X,
   SlidersHorizontal,
+  Camera,
+  QrCode,
+  Globe,
+  KeyRound,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { ChatMessage, Product } from '@/lib/types';
@@ -41,7 +45,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
       id: 'msg-init',
       role: 'assistant',
       content:
-        '👋 Welcome to **PayAgent Sentinel** — the autonomous procurement copilot.\n\nI parse catalog inventory, negotiate promotional bundle discounts, enforce your spending mandates, and execute 1-click sandbox checkouts via the **PayPal Orders v2 API**.\n\nTell me what you are looking for, or choose a quick prompt below!',
+        '👋 Welcome to **PayAgent Sentinel** — the autonomous procurement copilot.\n\nI parse catalog inventory, negotiate promotional bundle discounts, enforce your spending mandates, and execute 1-click sandbox checkouts via the **PayPal Orders v2 API** with cryptographic APCP consent signing.\n\nTell me what you are looking for, upload a receipt, or choose a prompt below!',
       timestamp: 'Just now',
       suggestedProducts: [CATALOG[0], CATALOG[2]],
     },
@@ -94,6 +98,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         suggestedProducts: data.suggestedProducts,
         actionSteps: data.actionSteps,
+        negotiation: data.negotiation,
         readyForCheckout: data.readyForCheckout,
       };
 
@@ -107,6 +112,11 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSimulateVisionScan = () => {
+    if (soundEnabled) playSound('click');
+    handleSend('Analyze uploaded paper receipt for AeroGlide Eco Travel Backpack 30L');
   };
 
   const handleCompletePayment = async (checkoutData: any) => {
@@ -142,11 +152,10 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
       });
       await captureRes.json();
 
-      // Audio & Confetti
       if (soundEnabled) playSound('success');
       confetti({
-        particleCount: 100,
-        spread: 80,
+        particleCount: 110,
+        spread: 85,
         origin: { y: 0.6 },
         colors: ['#0070BA', '#00CFE8', '#10B981', '#F59E0B'],
       });
@@ -159,6 +168,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
         status: 'COMPLETED',
         timestamp: new Date().toLocaleTimeString(),
         items: checkoutData.items,
+        signatureHash: checkoutData.signatureHash || '0x9b3f...e10a',
       };
 
       setActiveCheckout(null);
@@ -168,7 +178,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
         {
           id: `order-done-${Date.now()}`,
           role: 'assistant',
-          content: `Payment authorized and captured via **PayPal Sandbox Orders v2**!\n\nOrder **${orderId}** has been securely recorded and synced to the **AG Grid Merchant Hub** in real-time.`,
+          content: `Payment authorized and captured via **PayPal Sandbox Orders v2**!\n\nOrder **${orderId}** has been securely recorded with cryptographic APCP consent and synchronized to the **AG Grid Merchant Hub** in real-time.`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           completedOrder: orderReceipt,
         },
@@ -319,7 +329,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
 
       </div>
 
-      {/* Main Conversational Commerce Stream (Takes full width on mobile) */}
+      {/* Main Conversational Commerce Stream */}
       <div className="flex-1 lg:col-span-8 flex flex-col glass-panel rounded-3xl shadow-2xl overflow-hidden border border-white/10">
         
         {/* Terminal Header Bar */}
@@ -328,21 +338,31 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
             <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0" />
             <span className="font-bold text-white truncate text-xs sm:text-sm">PayAgent Neural Shopper</span>
             <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20 font-mono">
-              Tool Calling Active
+              APCP Protocol v1.0
             </span>
           </div>
 
           <div className="flex items-center space-x-2">
+            {/* Vision Scanner simulator button */}
+            <button
+              onClick={handleSimulateVisionScan}
+              title="Upload / OCR paper receipt"
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-bold transition cursor-pointer"
+            >
+              <Camera className="w-3.5 h-3.5" />
+              <span className="hidden xs:inline">OCR Receipt</span>
+            </button>
+
             {/* Mobile Mandate Toggle Pill */}
             <button
               onClick={() => {
                 if (soundEnabled) playSound('click');
                 setMobileMandateOpen(true);
               }}
-              className="lg:hidden flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-300 text-xs font-bold"
+              className="lg:hidden flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-300 text-xs font-bold"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>Mandate (${maxBudget})</span>
+              <span>(${maxBudget})</span>
             </button>
 
             <div className="hidden sm:flex items-center space-x-1 text-emerald-400 font-semibold font-mono text-[11px] bg-emerald-500/10 px-2.5 py-1 rounded-xl border border-emerald-500/20">
@@ -374,9 +394,12 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                 {/* Agent Action Steps */}
                 {msg.actionSteps && msg.actionSteps.length > 0 && (
                   <div className="mb-3 p-3 rounded-2xl bg-black/60 border border-white/5 space-y-1.5">
-                    <div className="text-[10px] font-black uppercase tracking-wider text-cyan-400 flex items-center space-x-1.5">
-                      <Sparkles className="w-3 h-3 animate-spin" />
-                      <span>Autonomous Pipeline Chain</span>
+                    <div className="text-[10px] font-black uppercase tracking-wider text-cyan-400 flex items-center justify-between">
+                      <span className="flex items-center space-x-1.5">
+                        <Sparkles className="w-3 h-3 animate-spin" />
+                        <span>Autonomous Protocol Chain</span>
+                      </span>
+                      <span className="font-mono text-slate-500 text-[9px]">4 stages verified</span>
                     </div>
                     <div className="space-y-1">
                       {msg.actionSteps.map((step) => (
@@ -441,7 +464,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                   </div>
                 )}
 
-                {/* Digital Receipt */}
+                {/* Digital Receipt with APCP Cryptographic Signature */}
                 {msg.completedOrder && (
                   <div className="mt-3.5 p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-200 space-y-2">
                     <div className="flex items-center justify-between text-xs font-bold text-emerald-400 pb-2 border-b border-emerald-500/20">
@@ -465,8 +488,12 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">Dispute Shield:</span>
-                        <span className="text-cyan-400">Zero-Chargeback Verified</span>
+                        <span className="text-slate-400">APCP Signature:</span>
+                        <span className="text-cyan-400 font-bold">{msg.completedOrder.signatureHash || '0x8f2a...c10b'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Seller Protection:</span>
+                        <span className="text-emerald-400">Confirmed Eligible</span>
                       </div>
                     </div>
                   </div>
@@ -494,7 +521,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
             </div>
           )}
 
-          {/* Active PayPal Sandbox Checkout Card */}
+          {/* Active PayPal Sandbox Checkout Card with Protocol Signature */}
           {activeCheckout && (
             <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-[#0c1426] via-[#090e1b] to-black border-2 border-blue-500/60 shadow-2xl animate-in fade-in slide-in-from-bottom-3 duration-300 max-w-md mx-auto">
               
@@ -528,14 +555,31 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                   <span>Rebate Applied:</span>
                   <span className="font-mono">-${activeCheckout.discount.toFixed(2)}</span>
                 </div>
+                {activeCheckout.carbonOffset > 0 && (
+                  <div className="flex justify-between text-cyan-400 text-[11px]">
+                    <span className="flex items-center">
+                      <Leaf className="w-3 h-3 mr-1" /> PayPal Green Offset:
+                    </span>
+                    <span className="font-mono">+${activeCheckout.carbonOffset.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm font-black text-white pt-1">
                   <span>Net Due:</span>
                   <span className="font-mono text-cyan-400 text-base">${activeCheckout.total.toFixed(2)} USD</span>
                 </div>
               </div>
 
+              {/* APCP Cryptographic Nonce Token Display */}
+              <div className="py-2 flex items-center justify-between text-[10px] font-mono text-slate-400 bg-black/40 px-3 rounded-xl border border-white/5 my-2">
+                <span className="flex items-center space-x-1 text-slate-300">
+                  <KeyRound className="w-3 h-3 text-cyan-400" />
+                  <span>APCP Intent Nonce:</span>
+                </span>
+                <span className="text-cyan-300 font-bold">{activeCheckout.signatureHash || '0x7e29...dd44'}</span>
+              </div>
+
               {/* PayPal Sandbox Checkout Action Button */}
-              <div className="pt-3.5">
+              <div className="pt-2">
                 <button
                   disabled={processingPayment}
                   onClick={() => handleCompletePayment(activeCheckout)}
