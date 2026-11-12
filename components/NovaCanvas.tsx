@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CATALOG } from '@/lib/products';
-import { Product } from '@/lib/types';
+import { Product, AgentActionStep } from '@/lib/types';
 import { playSound } from '@/lib/sounds';
 
 interface NovaCanvasProps {
@@ -45,6 +45,39 @@ export default function NovaCanvas({ soundEnabled, onNavigateToMerchant, theme =
 
   const [processingPayment, setProcessingPayment] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<any>(null);
+  const [agentReply, setAgentReply] = useState<string>(
+    'Mandate active: $100 max ceiling. AI arbitration standing by to negotiate discounts and verify sandbox payloads.'
+  );
+  const [agentSteps, setAgentSteps] = useState<AgentActionStep[]>([
+    {
+      id: 'step-1',
+      title: 'APCP Mandate Verification',
+      status: 'completed',
+      detail: 'Spending ceiling locked at $100.00 USD. Zero-overage policy active.',
+      latencyMs: 38,
+    },
+    {
+      id: 'step-2',
+      title: 'Merchant Inventory Arbitration',
+      status: 'completed',
+      detail: 'Arbitrated catalog specifications & live merchant inventory.',
+      latencyMs: 54,
+    },
+    {
+      id: 'step-3',
+      title: '10% Rebate & Green Offset',
+      status: 'completed',
+      detail: 'Negotiated autonomous partner concession (-10%) + PayPal Green offset.',
+      latencyMs: 29,
+    },
+    {
+      id: 'step-4',
+      title: 'PayPal Orders v2 Payload Signing',
+      status: 'completed',
+      detail: 'Ed25519 signature nonce attached to capture payload.',
+      latencyMs: 44,
+    },
+  ]);
 
   // Filter catalog based on user search or constraints
   const filteredProducts = CATALOG.filter((p) => {
@@ -57,28 +90,65 @@ export default function NovaCanvas({ soundEnabled, onNavigateToMerchant, theme =
     return true;
   });
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (soundEnabled) playSound('click');
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+
+    try {
+      const res = await fetch('/api/agent/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: query || 'Find best match for mandate',
+          mandate: { maxBudget, ecoOnly, autoDiscount },
+        }),
+      });
+      const data = await res.json();
+      if (data.actionSteps) setAgentSteps(data.actionSteps);
+      if (data.replyText) setAgentReply(data.replyText);
+      if (data.suggestedProducts && data.suggestedProducts.length > 0) {
+        setSelectedProduct(data.suggestedProducts[0]);
+      } else if (filteredProducts.length > 0) {
+        setSelectedProduct(filteredProducts[0]);
+      }
       if (soundEnabled) playSound('agent');
+    } catch (err) {
+      console.error('Agent chat error:', err);
       if (filteredProducts.length > 0) {
         setSelectedProduct(filteredProducts[0]);
       }
-    }, 400);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSimulateReceiptScan = () => {
+  const handleSimulateReceiptScan = async () => {
     if (soundEnabled) playSound('click');
     setLoading(true);
-    setQuery('AeroGlide Eco Travel Backpack');
-    setTimeout(() => {
-      setSelectedProduct(CATALOG[0]);
-      setLoading(false);
+    setQuery('OCR Paper Receipt: AeroGlide Eco Travel Backpack 30L');
+
+    try {
+      const res = await fetch('/api/agent/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: 'receipt scan invoice for AeroGlide Travel Backpack 30L',
+          mandate: { maxBudget, ecoOnly, autoDiscount },
+        }),
+      });
+      const data = await res.json();
+      if (data.actionSteps) setAgentSteps(data.actionSteps);
+      if (data.replyText) setAgentReply(data.replyText);
+      if (data.suggestedProducts && data.suggestedProducts.length > 0) {
+        setSelectedProduct(data.suggestedProducts[0]);
+      }
       if (soundEnabled) playSound('agent');
-    }, 450);
+    } catch (e) {
+      setSelectedProduct(CATALOG[0]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Pricing calculations
@@ -252,7 +322,7 @@ export default function NovaCanvas({ soundEnabled, onNavigateToMerchant, theme =
               onChange={(e) => setMaxBudget(Number(e.target.value))}
               className="w-24 accent-blue-500 cursor-pointer"
             />
-            <span className="font-mono font-bold text-cyan-300">${maxBudget}</span>
+            <span className="font-mono font-bold text-blue-600 dark:text-cyan-300">${maxBudget}</span>
           </div>
 
           {/* Eco toggle */}
@@ -278,6 +348,62 @@ export default function NovaCanvas({ soundEnabled, onNavigateToMerchant, theme =
               className="w-4 h-4 rounded text-blue-600 accent-amber-500"
             />
           </label>
+        </div>
+      </div>
+
+      {/* Autonomous Agent Execution Pipeline & Arbitration Strip */}
+      <div className="nova-card rounded-3xl p-4 sm:p-5 space-y-3.5 shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-white/5">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white">
+              <Cpu className="w-3.5 h-3.5" />
+            </div>
+            <div>
+              <span className="text-xs font-black uppercase tracking-wider text-white">
+                PayAgent Autonomous Arbitration Pipeline
+              </span>
+              <span className="text-[10px] text-slate-400 font-mono ml-2">APCP Protocol v1.0</span>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold uppercase">
+              Mandate Enforced &bull; Real-time
+            </span>
+          </div>
+        </div>
+
+        {/* Dynamic Agent Reasoning Quote */}
+        {agentReply && (
+          <div className="p-3 rounded-2xl bg-black/40 border border-white/5 flex items-start space-x-2.5 text-xs text-slate-300">
+            <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong className="text-white">AI Shopper Agent:</strong> {agentReply}
+            </p>
+          </div>
+        )}
+
+        {/* 4 Pipeline Step Telemetry Pills */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1">
+          {agentSteps.map((step, idx) => (
+            <div
+              key={step.id || idx}
+              className="p-2.5 rounded-xl bg-black/30 border border-white/5 flex items-start space-x-2 text-[11px]"
+            >
+              <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                <Check className="w-2.5 h-2.5" />
+              </div>
+              <div className="space-y-0.5 overflow-hidden">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="font-bold text-white truncate">{step.title}</span>
+                  {step.latencyMs && (
+                    <span className="text-[9px] font-mono text-slate-500 shrink-0">{step.latencyMs}ms</span>
+                  )}
+                </div>
+                <p className="text-[10px] text-slate-400 line-clamp-1">{step.detail}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
