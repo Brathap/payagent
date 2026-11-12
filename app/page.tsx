@@ -21,6 +21,7 @@ export default function Home() {
   // Cross-component triggers for the tour
   const [tourBudget, setTourBudget] = useState<number | undefined>(undefined);
   const [tourQuery, setTourQuery] = useState<string | undefined>(undefined);
+  const checkoutTriggerRef = React.useRef<(() => void) | null>(null);
 
   useEffect(() => {
     try {
@@ -90,6 +91,12 @@ export default function Home() {
             soundEnabled={soundEnabled}
             onNavigateToMerchant={() => setActiveTab('merchant')}
             theme={theme}
+            controlledBudget={tourBudget}
+            controlledQuery={tourQuery}
+            onRegisterTriggerCheckout={(fn) => {
+              checkoutTriggerRef.current = fn;
+            }}
+            onStartTour={() => setTourActive(true)}
           />
         ) : activeTab === 'merchant' ? (
           <MerchantDashboard soundEnabled={soundEnabled} theme={theme} />
@@ -105,7 +112,11 @@ export default function Home() {
         onNavigateTab={(tab) => setActiveTab(tab)}
         onSetBudget={(val) => setTourBudget(val)}
         onSearch={(q) => setTourQuery(q)}
-        onTriggerCheckout={() => {}}
+        onTriggerCheckout={() => {
+          if (checkoutTriggerRef.current) {
+            checkoutTriggerRef.current();
+          }
+        }}
         onTriggerDispute={() => {}}
       />
 
