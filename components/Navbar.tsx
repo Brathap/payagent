@@ -66,34 +66,8 @@ export default function Navbar({
 
   return (
     <header className={`sticky top-0 z-50 backdrop-blur-xl border-b transition-colors duration-200 ${
-      isLight ? 'bg-white/95 border-slate-200/90 text-slate-800' : 'bg-[#060911]/95 border-slate-800 text-white'
+      isLight ? 'bg-white/95 border-slate-200 text-slate-800' : 'bg-[#090d16]/95 border-slate-800 text-white'
     }`}>
-      {/* Top Institutional Hackathon Status Line */}
-      <div className={`border-b px-4 py-1.5 flex items-center justify-between text-[11px] transition-colors ${
-        isLight ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-black/40 border-slate-800 text-slate-400'
-      }`}>
-        <div className="flex items-center space-x-2 truncate">
-          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shrink-0" />
-          <span className="font-mono text-blue-600 dark:text-cyan-400 font-bold tracking-wider shrink-0">
-            PAYPAL AI HACKATHON 2026
-          </span>
-          <span className="hidden sm:inline text-slate-400">&bull;</span>
-          <span className="hidden sm:inline truncate">
-            Agentic Payment Consent Protocol (APCP) &bull; Orders v2 REST &bull; AG Grid Community v36
-          </span>
-        </div>
-        <div className="flex items-center space-x-3 font-mono text-[10px] shrink-0">
-          <span className="flex items-center space-x-1 text-emerald-600 dark:text-emerald-400 font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span>ED25519 ENCLAVE: VERIFIED</span>
-          </span>
-          <span className="hidden md:flex items-center space-x-1 text-blue-600 dark:text-cyan-400 font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-            <span>PAYPAL SANDBOX: ONLINE</span>
-          </span>
-        </div>
-      </div>
-
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
@@ -101,16 +75,17 @@ export default function Navbar({
         <div className="flex items-center space-x-3 shrink-0 cursor-pointer" onClick={() => switchTab('canvas')}>
           <Logo size={36} />
           <div>
-            <div className="flex items-center space-x-1.5">
+            <div className="flex items-center space-x-2">
               <span className={`font-black text-lg tracking-tight ${isLight ? 'text-slate-900' : 'text-white'}`}>
                 PayAgent
               </span>
-              <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-[#0070BA] text-white">
-                NOVA
+              <span className="inline-flex items-center space-x-1 px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>PayPal Enclave</span>
               </span>
             </div>
             <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden lg:block font-mono">
-              Autonomous Commerce Protocol
+              APCP Protocol &bull; Orders v2 REST
             </p>
           </div>
         </div>
@@ -126,11 +101,11 @@ export default function Navbar({
               <button
                 key={item.id}
                 onClick={() => switchTab(item.id)}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition cursor-pointer ${
+                className={`flex items-center space-x-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl transition cursor-pointer ${
                   isActive
                     ? 'bg-[#0070BA] text-white shadow-sm'
                     : isLight
-                    ? 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
+                    ? 'text-slate-600 hover:text-slate-900 hover:bg-white'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
