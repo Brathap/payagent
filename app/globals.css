@@ -1,49 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --background: #05070e;
+  --background: #090d16;
   --foreground: #f8fafc;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
 }
 
-/* Luxury ambient mesh background */
+/* Ambient luxury dark mesh */
 .mesh-bg {
-  background: 
-    radial-gradient(at 10% 10%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
-    radial-gradient(at 90% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
-    radial-gradient(at 50% 90%, rgba(14, 165, 233, 0.1) 0px, transparent 60%),
-    #05070e;
+  background-color: #080c15;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.08) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
-/* Glassmorphism surface styling */
-.glass-panel {
-  background: rgba(13, 18, 30, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Hide scrollbars for chrome/safari/firefox for clean pill carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.glass-panel-glow {
-  background: rgba(13, 18, 30, 0.75);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(59, 130, 246, 0.25);
-  box-shadow: 0 0 35px -5px rgba(59, 130, 246, 0.15);
-}
-
-.glass-pill {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Scrollbar polish */
+/* Custom sleek slim scrollbars */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -52,32 +42,32 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.4);
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* AG Grid Dark Theme overrides */
+/* Custom AG Grid Dark Overrides */
 .ag-theme-quartz-dark {
-  --ag-background-color: #090d16 !important;
-  --ag-header-background-color: #0c121e !important;
-  --ag-odd-row-background-color: #070a12 !important;
-  --ag-border-color: rgba(255, 255, 255, 0.07) !important;
+  --ag-background-color: #0b101c !important;
+  --ag-header-background-color: #0f1627 !important;
+  --ag-odd-row-background-color: #090e18 !important;
+  --ag-border-color: rgba(255, 255, 255, 0.08) !important;
   --ag-header-column-resize-handle-color: #3b82f6 !important;
-  --ag-row-hover-color: rgba(59, 130, 246, 0.07) !important;
-  --ag-selected-row-background-color: rgba(59, 130, 246, 0.14) !important;
+  --ag-row-hover-color: rgba(59, 130, 246, 0.08) !important;
+  --ag-selected-row-background-color: rgba(59, 130, 246, 0.15) !important;
   --ag-font-family: inherit !important;
-  font-size: 12.5px !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  font-size: 13px !important;
   border-radius: 1rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .ag-header-cell-label {
   font-weight: 700 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.06em !important;
+  letter-spacing: 0.05em !important;
   color: #94a3b8 !important;
-  font-size: 10.5px !important;
+  font-size: 11px !important;
 }

@@ -20,9 +20,9 @@ import {
   X,
   SlidersHorizontal,
   Camera,
-  QrCode,
-  Globe,
   KeyRound,
+  MessageSquare,
+  ArrowRight,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { ChatMessage, Product } from '@/lib/types';
@@ -45,7 +45,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
       id: 'msg-init',
       role: 'assistant',
       content:
-        '👋 Welcome to **PayAgent Sentinel** — the autonomous procurement copilot.\n\nI parse catalog inventory, negotiate promotional bundle discounts, enforce your spending mandates, and execute 1-click sandbox checkouts via the **PayPal Orders v2 API** with cryptographic APCP consent signing.\n\nTell me what you are looking for, upload a receipt, or choose a prompt below!',
+        'Hello! I am **PayAgent Sentinel**, your autonomous shopping and payment assistant.\n\nI can search product catalogs, negotiate bundle discounts, verify payment safety, and prepare instant 1-click checkouts via the **PayPal Orders v2 Sandbox API**.\n\nWhat would you like to buy today?',
       timestamp: 'Just now',
       suggestedProducts: [CATALOG[0], CATALOG[2]],
     },
@@ -116,7 +116,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
 
   const handleSimulateVisionScan = () => {
     if (soundEnabled) playSound('click');
-    handleSend('Analyze uploaded paper receipt for AeroGlide Eco Travel Backpack 30L');
+    handleSend('Analyze uploaded receipt for AeroGlide Eco Travel Backpack');
   };
 
   const handleCompletePayment = async (checkoutData: any) => {
@@ -168,7 +168,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
         status: 'COMPLETED',
         timestamp: new Date().toLocaleTimeString(),
         items: checkoutData.items,
-        signatureHash: checkoutData.signatureHash || '0x9b3f...e10a',
+        signatureHash: checkoutData.signatureHash || '0x8f2a...c10b',
       };
 
       setActiveCheckout(null);
@@ -192,19 +192,19 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
   };
 
   const quickPrompts = [
-    'Find an eco-friendly travel backpack under $70',
-    'Show me high-performance ANC headphones',
+    'Find an eco travel backpack under $70',
+    'Show me ANC wireless headphones',
     'Buy the AeroGlide Travel Backpack with PayPal',
     'Compare outdoor solar power banks',
   ];
 
   const MandateControls = () => (
-    <div className="space-y-4 text-xs">
+    <div className="space-y-3.5 text-xs">
       {/* Budget Slider */}
-      <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5">
+      <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-sm">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-slate-400 font-medium">Max Spend Ceiling:</span>
-          <span className="font-mono font-black text-sm text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-lg border border-blue-500/20">
+          <span className="text-slate-300 font-semibold text-xs">Max Spend Ceiling:</span>
+          <span className="font-mono font-bold text-sm text-cyan-300 bg-cyan-950/60 px-2.5 py-0.5 rounded-lg border border-cyan-800/60">
             ${maxBudget} USD
           </span>
         </div>
@@ -215,23 +215,23 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
           step={5}
           value={maxBudget}
           onChange={(e) => setMaxBudget(Number(e.target.value))}
-          className="w-full accent-blue-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg appearance-none"
+          className="w-full accent-blue-500 cursor-pointer h-2 bg-slate-800 rounded-lg appearance-none"
         />
-        <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+        <div className="flex justify-between text-[11px] text-slate-400 font-mono mt-1.5 font-medium">
           <span>$30 min</span>
           <span>$250 max</span>
         </div>
       </div>
 
       {/* Toggle: Eco Only */}
-      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-black/40 border border-white/5 hover:border-emerald-500/20 transition">
+      <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-emerald-500/30 transition">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-            <Leaf className="w-4 h-4" />
+          <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+            <Leaf className="w-3.5 h-3.5" />
           </div>
           <div>
-            <div className="font-bold text-white text-xs">Eco-Certified Priority</div>
-            <div className="text-[10.5px] text-slate-400">100% sustainable items</div>
+            <div className="font-semibold text-white text-xs">Eco-Certified Priority</div>
+            <div className="text-[10px] text-slate-400">100% sustainable materials</div>
           </div>
         </div>
         <input
@@ -243,14 +243,14 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
       </div>
 
       {/* Toggle: Autonomous Discounts */}
-      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-black/40 border border-white/5 hover:border-amber-500/20 transition">
+      <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-500/30 transition">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-            <Tag className="w-4 h-4" />
+          <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+            <Tag className="w-3.5 h-3.5" />
           </div>
           <div>
-            <div className="font-bold text-white text-xs">AI Deal Negotiation</div>
-            <div className="text-[10.5px] text-slate-400">Auto 10% partner rebate</div>
+            <div className="font-semibold text-white text-xs">AI Deal Negotiation</div>
+            <div className="text-[10px] text-slate-400">Auto 10% partner rebate</div>
           </div>
         </div>
         <input
@@ -262,59 +262,59 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
       </div>
 
       <div className="pt-2 text-[10.5px] text-slate-400 flex items-center justify-between font-mono">
-        <span>Policy Enforcement:</span>
+        <span className="text-slate-400">Policy Enforcement:</span>
         <span className="text-emerald-400 font-semibold flex items-center space-x-1">
           <Lock className="w-3 h-3" />
-          <span>Active &bull; Non-Bypassable</span>
+          <span>Active &bull; Verified</span>
         </span>
       </div>
     </div>
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-4 h-[calc(100vh-5rem)] flex flex-col lg:grid lg:grid-cols-12 gap-4">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 h-[calc(100vh-4.25rem)] flex flex-col lg:grid lg:grid-cols-12 gap-3.5 overflow-hidden">
       
       {/* Desktop Left Column: Mandate & Catalog */}
-      <div className="hidden lg:flex lg:col-span-4 flex-col space-y-4 overflow-hidden">
+      <div className="hidden lg:flex lg:col-span-4 flex-col space-y-3 h-full overflow-hidden">
         
         {/* Mandate Card */}
-        <div className="glass-panel rounded-3xl p-5 shadow-2xl relative overflow-hidden shrink-0">
-          <div className="flex items-center justify-between pb-3.5 border-b border-white/5">
+        <div className="bg-[#0e1422] border border-slate-800 rounded-2xl p-4 shadow-xl shrink-0">
+          <div className="flex items-center justify-between pb-2.5 border-b border-slate-800">
             <div className="flex items-center space-x-2">
               <Sliders className="w-4 h-4 text-blue-400" />
-              <h3 className="text-xs font-black uppercase tracking-wider text-white">Shopper Spending Mandate</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white">Shopper Spending Mandate</h3>
             </div>
-            <span className="text-[9.5px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">
+            <span className="text-[9.5px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/25">
               ENFORCED
             </span>
           </div>
 
-          <div className="pt-4">
+          <div className="pt-3">
             <MandateControls />
           </div>
         </div>
 
         {/* Live Catalog Card */}
-        <div className="glass-panel rounded-3xl p-4.5 flex-1 flex flex-col shadow-2xl overflow-hidden min-h-0">
-          <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-white/5 text-xs">
+        <div className="bg-[#0e1422] border border-slate-800 rounded-2xl p-4 flex-1 flex flex-col shadow-xl overflow-hidden min-h-0">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-xs">
             <span className="font-bold text-white uppercase tracking-wider flex items-center space-x-1.5 text-xs">
               <ShoppingBag className="w-3.5 h-3.5 text-indigo-400" />
               <span>Catalog Inventory</span>
             </span>
-            <span className="text-[10px] text-slate-400 font-mono">8 items indexed</span>
+            <span className="text-[10.5px] text-slate-400 font-mono">8 items indexed</span>
           </div>
 
-          <div className="space-y-2 overflow-y-auto flex-1 pr-1">
-            {CATALOG.slice(0, 5).map((p) => (
+          <div className="space-y-2 overflow-y-auto flex-1 pr-1 scrollbar-thin scrollbar-thumb-slate-700">
+            {CATALOG.map((p) => (
               <div
                 key={p.id}
                 onClick={() => handleSend(`Buy the ${p.name} with PayPal`)}
-                className="p-2.5 rounded-2xl bg-black/30 hover:bg-white/[0.04] border border-white/5 hover:border-blue-500/30 transition-all cursor-pointer flex items-center space-x-3 group active:scale-[0.98]"
+                className="p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800/80 hover:border-blue-500/40 transition-all cursor-pointer flex items-center space-x-3 group"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.imageUrl} alt={p.name} className="w-12 h-12 object-cover rounded-xl shrink-0 ring-1 ring-white/10" />
+                <img src={p.imageUrl} alt={p.name} className="w-11 h-11 object-cover rounded-lg shrink-0 border border-slate-700" />
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-white text-xs truncate group-hover:text-blue-400 transition">{p.name}</div>
+                  <div className="font-semibold text-white text-xs truncate group-hover:text-blue-400 transition">{p.name}</div>
                   <div className="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5 font-mono">
                     <span className="text-emerald-400 font-bold">${p.price.toFixed(2)}</span>
                     <span>&bull;</span>
@@ -330,42 +330,41 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
       </div>
 
       {/* Main Conversational Commerce Stream */}
-      <div className="flex-1 lg:col-span-8 flex flex-col glass-panel rounded-3xl shadow-2xl overflow-hidden border border-white/10">
+      <div className="flex-1 lg:col-span-8 flex flex-col bg-[#0e1422] border border-slate-800 rounded-2xl shadow-xl overflow-hidden h-full">
         
-        {/* Terminal Header Bar */}
-        <div className="px-4 py-3 bg-black/40 border-b border-white/5 flex items-center justify-between text-xs">
+        {/* Top Chat Header */}
+        <div className="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between text-xs shrink-0">
           <div className="flex items-center space-x-2 truncate">
             <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0" />
-            <span className="font-bold text-white truncate text-xs sm:text-sm">PayAgent Neural Shopper</span>
+            <span className="font-bold text-white text-xs sm:text-sm">PayAgent Neural Shopper</span>
             <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20 font-mono">
               APCP Protocol v1.0
             </span>
           </div>
 
           <div className="flex items-center space-x-2">
-            {/* Vision Scanner simulator button */}
             <button
               onClick={handleSimulateVisionScan}
               title="Upload / OCR paper receipt"
-              className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-bold transition cursor-pointer"
+              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-semibold transition cursor-pointer"
             >
               <Camera className="w-3.5 h-3.5" />
               <span className="hidden xs:inline">OCR Receipt</span>
             </button>
 
-            {/* Mobile Mandate Toggle Pill */}
+            {/* Mobile Mandate Toggle Button */}
             <button
               onClick={() => {
                 if (soundEnabled) playSound('click');
                 setMobileMandateOpen(true);
               }}
-              className="lg:hidden flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-300 text-xs font-bold"
+              className="lg:hidden flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-blue-600/20 border border-blue-500/30 text-blue-300 text-xs font-bold"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>(${maxBudget})</span>
+              <span>Mandate (${maxBudget})</span>
             </button>
 
-            <div className="hidden sm:flex items-center space-x-1 text-emerald-400 font-semibold font-mono text-[11px] bg-emerald-500/10 px-2.5 py-1 rounded-xl border border-emerald-500/20">
+            <div className="hidden sm:flex items-center space-x-1 text-emerald-400 font-semibold font-mono text-[11px] bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>PAYPAL READY</span>
             </div>
@@ -373,31 +372,31 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
         </div>
 
         {/* Chat Feed */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-5 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 scrollbar-thin scrollbar-thumb-slate-700">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex items-start space-x-2.5 sm:space-x-3.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex items-start space-x-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role !== 'user' && (
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/20 ring-1 ring-white/20">
-                  <Bot className="w-4 h-4 sm:w-5 sm:h-5" />
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white shrink-0 shadow-md">
+                  <Bot className="w-4 h-4" />
                 </div>
               )}
 
-              <div className={`max-w-[88%] sm:max-w-xl rounded-2xl sm:rounded-3xl p-3.5 sm:p-4.5 ${
+              <div className={`max-w-[88%] sm:max-w-xl rounded-2xl p-4 ${
                 msg.role === 'user'
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-sm shadow-lg shadow-blue-600/25'
-                  : 'bg-slate-900/90 border border-white/10 text-slate-200 rounded-bl-sm shadow-xl'
+                  ? 'bg-blue-600 text-white rounded-br-sm shadow-md'
+                  : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-bl-sm shadow-md'
               }`}>
                 
                 {/* Agent Action Steps */}
                 {msg.actionSteps && msg.actionSteps.length > 0 && (
-                  <div className="mb-3 p-3 rounded-2xl bg-black/60 border border-white/5 space-y-1.5">
-                    <div className="text-[10px] font-black uppercase tracking-wider text-cyan-400 flex items-center justify-between">
+                  <div className="mb-3 p-3 rounded-xl bg-black/50 border border-slate-800 space-y-1.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 flex items-center justify-between">
                       <span className="flex items-center space-x-1.5">
                         <Sparkles className="w-3 h-3 animate-spin" />
-                        <span>Autonomous Protocol Chain</span>
+                        <span>Autonomous Execution Pipeline</span>
                       </span>
                       <span className="font-mono text-slate-500 text-[9px]">4 stages verified</span>
                     </div>
@@ -416,24 +415,24 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                 )}
 
                 {/* Message text */}
-                <div className="text-xs sm:text-sm whitespace-pre-wrap leading-relaxed">
+                <div className="text-xs sm:text-sm whitespace-pre-wrap leading-relaxed text-slate-100">
                   {msg.content}
                 </div>
 
-                {/* Product Cards Grid */}
+                {/* Suggested Product Cards */}
                 {msg.suggestedProducts && msg.suggestedProducts.length > 0 && (
                   <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {msg.suggestedProducts.map((prod) => (
                       <div
                         key={prod.id}
-                        className="bg-black/50 border border-white/5 rounded-2xl p-3 flex flex-col justify-between hover:border-blue-500/40 transition-all group"
+                        className="bg-black/50 border border-slate-800 rounded-xl p-3 flex flex-col justify-between hover:border-blue-500/50 transition-all group"
                       >
                         <div>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={prod.imageUrl}
                             alt={prod.name}
-                            className="w-full h-28 sm:h-32 object-cover rounded-xl mb-2 group-hover:scale-[1.02] transition duration-300"
+                            className="w-full h-28 object-cover rounded-lg mb-2"
                           />
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-[9.5px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 font-bold uppercase tracking-wider border border-blue-500/20">
@@ -447,13 +446,13 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                           <p className="text-[10.5px] text-slate-400 line-clamp-2 mt-1">{prod.description}</p>
                         </div>
 
-                        <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between">
-                          <span className="text-sm font-black text-white font-mono">
+                        <div className="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between">
+                          <span className="text-sm font-bold text-white font-mono">
                             ${prod.price.toFixed(2)}
                           </span>
                           <button
                             onClick={() => handleSend(`Buy ${prod.name} with PayPal`)}
-                            className="flex items-center space-x-1 px-3 py-1.5 text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-500 text-white transition shadow-md shadow-blue-600/30 active:scale-95"
+                            className="flex items-center space-x-1 px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm"
                           >
                             <ShoppingBag className="w-3.5 h-3.5" />
                             <span>Buy with Agent</span>
@@ -464,15 +463,15 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                   </div>
                 )}
 
-                {/* Digital Receipt with APCP Cryptographic Signature */}
+                {/* Completed Digital Receipt */}
                 {msg.completedOrder && (
-                  <div className="mt-3.5 p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-200 space-y-2">
+                  <div className="mt-3.5 p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 space-y-2">
                     <div className="flex items-center justify-between text-xs font-bold text-emerald-400 pb-2 border-b border-emerald-500/20">
                       <div className="flex items-center space-x-1.5">
                         <Receipt className="w-4 h-4" />
                         <span>Cryptographic Settlement Receipt</span>
                       </div>
-                      <span className="font-mono text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                      <span className="font-mono text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">
                         SETTLED
                       </span>
                     </div>
@@ -493,7 +492,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Seller Protection:</span>
-                        <span className="text-emerald-400">Confirmed Eligible</span>
+                        <span className="text-emerald-400">Eligible</span>
                       </div>
                     </div>
                   </div>
@@ -502,17 +501,17 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
               </div>
 
               {msg.role === 'user' && (
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-slate-800 border border-white/10 flex items-center justify-center text-slate-300 shrink-0">
-                  <User className="w-4 h-4 sm:w-5 sm:h-5" />
+                <div className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 shrink-0">
+                  <User className="w-4 h-4" />
                 </div>
               )}
             </div>
           ))}
 
-          {/* Loading */}
+          {/* Loading Indicator */}
           {loading && (
             <div className="flex items-center space-x-2.5 text-slate-400 text-xs py-2">
-              <div className="w-7 h-7 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 animate-pulse">
+              <div className="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 animate-pulse">
                 <Sparkles className="w-3.5 h-3.5 animate-spin" />
               </div>
               <span className="font-mono animate-pulse text-cyan-300 text-xs">
@@ -521,11 +520,11 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
             </div>
           )}
 
-          {/* Active PayPal Sandbox Checkout Card with Protocol Signature */}
+          {/* Active PayPal Sandbox Checkout Card */}
           {activeCheckout && (
-            <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-[#0c1426] via-[#090e1b] to-black border-2 border-blue-500/60 shadow-2xl animate-in fade-in slide-in-from-bottom-3 duration-300 max-w-md mx-auto">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#090f1d] border-2 border-blue-500/60 shadow-2xl animate-in fade-in duration-200 max-w-md mx-auto">
               
-              <div className="flex items-center justify-between pb-3 border-b border-white/5">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 rounded-xl bg-[#003087] flex items-center justify-center text-white font-black italic text-base shadow-md">
                     P
@@ -535,12 +534,12 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                     <p className="text-[10px] text-slate-400 font-mono">Orders v2 Sandbox Protocol</p>
                   </div>
                 </div>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold font-mono">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold font-mono">
                   10% AI Rebate
                 </span>
               </div>
 
-              <div className="py-3 space-y-1.5 text-xs text-slate-300 border-b border-white/5">
+              <div className="py-3 space-y-1.5 text-xs text-slate-300 border-b border-slate-800 font-sans">
                 {activeCheckout.items.map((item: any, idx: number) => (
                   <div key={idx} className="flex justify-between">
                     <span className="text-slate-200 truncate pr-2">{item.name} &times; {item.quantity}</span>
@@ -552,7 +551,7 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                   <span className="font-mono">${activeCheckout.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-emerald-400 font-semibold">
-                  <span>Rebate Applied:</span>
+                  <span>AI Negotiated Rebate:</span>
                   <span className="font-mono">-${activeCheckout.discount.toFixed(2)}</span>
                 </div>
                 {activeCheckout.carbonOffset > 0 && (
@@ -563,27 +562,27 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                     <span className="font-mono">+${activeCheckout.carbonOffset.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-sm font-black text-white pt-1">
-                  <span>Net Due:</span>
+                <div className="flex justify-between text-sm font-bold text-white pt-1">
+                  <span>Net Amount Due:</span>
                   <span className="font-mono text-cyan-400 text-base">${activeCheckout.total.toFixed(2)} USD</span>
                 </div>
               </div>
 
-              {/* APCP Cryptographic Nonce Token Display */}
-              <div className="py-2 flex items-center justify-between text-[10px] font-mono text-slate-400 bg-black/40 px-3 rounded-xl border border-white/5 my-2">
-                <span className="flex items-center space-x-1 text-slate-300">
+              {/* APCP Nonce Token */}
+              <div className="py-2 flex items-center justify-between text-[10.5px] font-mono text-slate-300 bg-black/50 px-3 rounded-xl border border-slate-800 my-2.5">
+                <span className="flex items-center space-x-1 text-slate-400">
                   <KeyRound className="w-3 h-3 text-cyan-400" />
                   <span>APCP Intent Nonce:</span>
                 </span>
                 <span className="text-cyan-300 font-bold">{activeCheckout.signatureHash || '0x7e29...dd44'}</span>
               </div>
 
-              {/* PayPal Sandbox Checkout Action Button */}
+              {/* PayPal Sandbox Checkout Button */}
               <div className="pt-2">
                 <button
                   disabled={processingPayment}
                   onClick={() => handleCompletePayment(activeCheckout)}
-                  className="w-full py-3 px-4 rounded-2xl font-bold text-[#003087] bg-[#ffc439] hover:bg-[#ffb71b] active:scale-[0.99] transition shadow-xl shadow-amber-500/20 flex items-center justify-center space-x-2 cursor-pointer"
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-[#003087] bg-[#ffc439] hover:bg-[#ffb71b] active:scale-[0.99] transition shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   {processingPayment ? (
                     <span className="flex items-center space-x-2 text-slate-900 font-mono text-xs">
@@ -592,14 +591,14 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
                     </span>
                   ) : (
                     <>
-                      <span className="italic font-black text-lg tracking-tight">Pay<span className="text-[#0079C1]">Pal</span></span>
+                      <span className="italic font-black text-xl tracking-tight">Pay<span className="text-[#0079C1]">Pal</span></span>
                       <span className="text-xs font-black uppercase tracking-wider ml-1 text-slate-900">
                         1-Click Sandbox Checkout (${activeCheckout.total.toFixed(2)})
                       </span>
                     </>
                   )}
                 </button>
-                <div className="flex items-center justify-center space-x-1.5 text-[10px] text-slate-400 mt-2 font-mono">
+                <div className="flex items-center justify-center space-x-1.5 text-[10.5px] text-slate-400 mt-2 font-mono">
                   <Lock className="w-3 h-3 text-emerald-400" />
                   <span>Sandbox Verified &bull; End-to-End Cryptographic Capture</span>
                 </div>
@@ -611,13 +610,13 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Quick Prompts Ribbon */}
-        <div className="px-3 sm:px-4 py-2 border-t border-white/5 bg-black/40 flex items-center space-x-2 overflow-x-auto no-scrollbar">
+        {/* Quick Prompts Ribbon (Clean no scrollbar) */}
+        <div className="px-4 py-2 border-t border-slate-800 bg-slate-950/60 flex items-center space-x-2 overflow-x-auto no-scrollbar shrink-0">
           {quickPrompts.map((prompt, idx) => (
             <button
               key={idx}
               onClick={() => handleSend(prompt)}
-              className="shrink-0 text-[11px] px-3 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-white/5 hover:border-white/10 text-slate-300 hover:text-white transition font-medium active:scale-95"
+              className="shrink-0 text-xs px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition font-medium"
             >
               {prompt}
             </button>
@@ -625,25 +624,25 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
         </div>
 
         {/* Chat Input */}
-        <div className="p-2.5 sm:p-4 bg-black/60 border-t border-white/5">
+        <div className="p-3 bg-slate-900/90 border-t border-slate-800 shrink-0">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSend();
             }}
-            className="flex items-center space-x-2 bg-slate-900/90 border border-white/10 rounded-2xl p-1.5 sm:p-2 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition shadow-inner"
+            className="flex items-center space-x-2 bg-black/60 border border-slate-800 rounded-xl p-1.5 focus-within:border-blue-500 transition shadow-inner"
           >
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask PayAgent to discover products, negotiate bundles, or checkout (e.g. 'Buy the eco travel backpack')..."
-              className="flex-1 bg-transparent px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none"
+              placeholder="Ask PayAgent to find products, compare, or checkout (e.g. 'Buy the eco travel backpack')..."
+              className="flex-1 bg-transparent px-3 py-1.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none"
             />
             <button
               type="submit"
               disabled={!input.trim() || loading}
-              className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-40 text-white transition shadow-md shadow-blue-600/30 active:scale-95"
+              className="p-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white transition shadow-sm"
             >
               <Send className="w-4 h-4" />
             </button>
@@ -655,11 +654,11 @@ export default function ShopperAgent({ soundEnabled }: ShopperAgentProps) {
       {/* Mobile Mandate Slide-Over Drawer */}
       {mobileMandateOpen && (
         <div className="lg:hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 animate-in fade-in duration-200">
-          <div className="glass-panel rounded-3xl max-w-md w-full p-5 border border-white/10 space-y-4 shadow-2xl relative">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+          <div className="bg-[#0e1422] rounded-2xl max-w-md w-full p-5 border border-slate-800 space-y-4 shadow-2xl relative">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center space-x-2">
                 <Sliders className="w-4 h-4 text-blue-400" />
-                <h3 className="text-xs font-black uppercase tracking-wider text-white">Shopper Spending Mandate</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-white">Shopper Spending Mandate</h3>
               </div>
               <button
                 onClick={() => setMobileMandateOpen(false)}
